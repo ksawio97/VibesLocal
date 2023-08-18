@@ -1,13 +1,19 @@
 package com.example.vibeslocal
 
+import com.example.vibeslocal.R
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.example.vibeslocal.adapters.SongListAdapter
 import com.example.vibeslocal.viewmodels.MainViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 class MainActivity : AppCompatActivity() {
@@ -25,8 +31,22 @@ class MainActivity : AppCompatActivity() {
 
         val btn1 = findViewById<Button>(R.id.btn1)
         btn1.setOnClickListener {
-            val songs = viewModel.loadData(contentResolver) ?: return@setOnClickListener
-            songListRecyclerView.adapter = SongListAdapter(songs)
+            lifecycleScope.launch {
+                val songs = withContext(Dispatchers.IO) {
+                    viewModel.loadData(contentResolver)
+                }
+                songs?.let {
+                    var adapter = SongListAdapter(it)
+                    songListRecyclerView.adapter = adapter
+                    adapter.setOnItemClickListener(object: SongListAdapter.onItemClickListener{
+                        override fun onItemClick(position: Int) {
+                            Toast.makeText(this@MainActivity, "You clicked song nr $position!", Toast.LENGTH_LONG).show()
+                            Log.i("Debug", "Song nr $position have been clicked!")
+                        }
+                    })
+                }
+            }
+
         }
     }
 }
