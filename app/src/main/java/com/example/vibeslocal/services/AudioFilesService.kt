@@ -53,7 +53,12 @@ class AudioFilesService : Service() {
                 Log.i("Debug", "Found ${cursor.count} songs")
                 //return songs array
                 return Array<SongModel>(cursor.count) {
-                    val song = SongModel(cursor.getLong(idColumn), cursor.getString(titleColumn), cursor.getString(artistColumn), getSongThumbnail(cursor.getString(filePathColumn)))
+                    val song = SongModel(
+                        cursor.getLong(idColumn),
+                        cursor.getString(titleColumn),
+                        cursor.getString(artistColumn),
+                        getSongThumbnail(cursor.getString(filePathColumn))
+                    )
                     cursor.moveToNext()
                     song
                 }
