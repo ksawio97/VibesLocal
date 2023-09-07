@@ -6,9 +6,8 @@ import androidx.lifecycle.ViewModel
 import com.example.vibeslocal.models.SongModel
 import com.example.vibeslocal.services.AudioFilesService
 
-class MusicItemsViewModel : ViewModel() {
+class MusicItemsViewModel(private val audioFilesService: AudioFilesService) : ViewModel() {
     //TODO Inject it with Koin
-    private val audioFilesService: AudioFilesService = AudioFilesService()
 
     fun loadData(contentResolver: ContentResolver) :Array<SongModel>? {
         Log.i("Debug", "MusicItemsViewModel loadData")
