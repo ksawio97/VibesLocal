@@ -26,7 +26,7 @@ class AudioFilesService : Service() {
     }
 
     //TODO make this function load data and add it incrementally (with no need to wait for all elements)
-    fun getSongsData(contentResolver: ContentResolver) : Array<SongModel>?{
+    fun getSongsData(contentResolver: ContentResolver) : Sequence<SongModel> = sequence {
         val projection = arrayOf(
             MediaStore.Audio.Media._ID,
             MediaStore.Audio.Media.TITLE,
@@ -52,19 +52,17 @@ class AudioFilesService : Service() {
             if (cursor.moveToNext()) {
                 Log.i("Debug", "Found ${cursor.count} songs")
                 //return songs array
-                return Array<SongModel>(cursor.count) {
-                    val song = SongModel(
+                for(i in 0..<cursor.count){
+                    yield(SongModel(
                         cursor.getLong(idColumn),
                         cursor.getString(titleColumn),
                         cursor.getString(artistColumn),
                         getSongThumbnail(cursor.getString(filePathColumn))
-                    )
+                    ))
                     cursor.moveToNext()
-                    song
                 }
             }
         }
-        return null
     }
 
     private fun getSongThumbnail(filePath: String): Bitmap? {

@@ -7,10 +7,10 @@ import com.example.vibeslocal.models.SongModel
 import com.example.vibeslocal.services.AudioFilesService
 
 class MusicItemsViewModel(private val audioFilesService: AudioFilesService) : ViewModel() {
-    //TODO Inject it with Koin
 
-    fun loadData(contentResolver: ContentResolver) :Array<SongModel>? {
+    //TODO save data into adapter incrementally (when read 1 song add it instantly while reading more)
+    fun loadData(contentResolver: ContentResolver) : Array<SongModel> {
         Log.i("Debug", "MusicItemsViewModel loadData")
-        return audioFilesService.getSongsData(contentResolver)
+        return audioFilesService.getSongsData(contentResolver).toList().toTypedArray()
     }
 }
