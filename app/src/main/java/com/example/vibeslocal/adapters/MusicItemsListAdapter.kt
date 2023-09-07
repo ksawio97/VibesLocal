@@ -8,8 +8,8 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.vibeslocal.R
 import com.example.vibeslocal.models.SongModel
-//TODO change songsList to be mutable list (for dynamic adding songs)
-class MusicItemsListAdapter(private var songsList: Array<SongModel>) :
+//TODO change songsList to be repos class with its own methods to manipulate data
+class MusicItemsListAdapter(private var songsList: MutableList<SongModel>) :
     RecyclerView.Adapter<MusicItemsListAdapter.SongHolder>() {
 
         private lateinit var onClickListener : OnItemClickListener
@@ -40,6 +40,13 @@ class MusicItemsListAdapter(private var songsList: Array<SongModel>) :
             return songsList.size
         }
 
+        fun addSong(newSong: SongModel){
+            songsList.add(newSong)
+        }
+
+        fun updateChanges(){
+            notifyDataSetChanged()
+        }
         inner class SongHolder(itemView: View, listener: OnItemClickListener) : RecyclerView.ViewHolder(itemView) {
             val songTitle : TextView = itemView.findViewById(R.id.song_title)
             val songAuthor : TextView = itemView.findViewById(R.id.song_author)
@@ -51,10 +58,4 @@ class MusicItemsListAdapter(private var songsList: Array<SongModel>) :
                 }
             }
         }
-
-    fun updateData(newSongsList: Array<SongModel>) {
-        songsList = newSongsList
-        notifyDataSetChanged()
-    }
-
 }

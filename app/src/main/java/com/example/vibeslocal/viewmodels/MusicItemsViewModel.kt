@@ -8,9 +8,10 @@ import com.example.vibeslocal.services.AudioFilesService
 
 class MusicItemsViewModel(private val audioFilesService: AudioFilesService) : ViewModel() {
 
-    //TODO save data into adapter incrementally (when read 1 song add it instantly while reading more)
-    fun loadData(contentResolver: ContentResolver) : Array<SongModel> {
+    fun loadData(contentResolver: ContentResolver, addSong: (newSong: SongModel) -> Unit) {
         Log.i("Debug", "MusicItemsViewModel loadData")
-        return audioFilesService.getSongsData(contentResolver).toList().toTypedArray()
+        audioFilesService.getSongsData(contentResolver).forEach { song ->
+            addSong(song)
+        }
     }
 }

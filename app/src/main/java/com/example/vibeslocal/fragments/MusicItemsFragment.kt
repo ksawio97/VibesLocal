@@ -30,7 +30,7 @@ class MusicItemsFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_music_items, container, false)
         val musicItemsListRecyclerView : RecyclerView = view.findViewById(R.id.music_items_list)
         musicItemsListRecyclerView.setHasFixedSize(true)
-        musicItemsListAdapter = MusicItemsListAdapter(emptyArray())
+        musicItemsListAdapter = MusicItemsListAdapter(mutableListOf<SongModel>())
         musicItemsListRecyclerView.adapter = musicItemsListAdapter
 
         musicItemsListAdapter.setOnItemClickListener(object: MusicItemsListAdapter.OnItemClickListener {
@@ -55,15 +55,12 @@ class MusicItemsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         lifecycleScope.launch {
-            val songs = withContext(Dispatchers.IO) {
+            withContext(Dispatchers.IO) {
                 if (activity?.contentResolver != null)
-                    viewModel.loadData(activity?.contentResolver!!)
-                else
-                    null
+                    viewModel.loadData(activity?.contentResolver!!, musicItemsListAdapter::addSong)
             }
-            songs?.let {
-                musicItemsListAdapter.updateData(it)
-            }
+        }.invokeOnCompletion {
+            musicItemsListAdapter.updateChanges()
         }
     }
 }

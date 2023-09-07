@@ -11,6 +11,11 @@ import android.os.IBinder
 import android.provider.MediaStore
 import android.util.Log
 import com.example.vibeslocal.models.SongModel
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import java.io.ByteArrayOutputStream
+import kotlinx.coroutines.coroutineScope
 
 class AudioFilesService : Service() {
     private val binder = AudioFilesBinder()
@@ -35,7 +40,7 @@ class AudioFilesService : Service() {
             )
         val selection = null
         val selectionArgs = null
-        val sortOrder = "${MediaStore.Audio.Media.TITLE} ASC"
+        val sortOrder = null
 
         contentResolver.query(
             MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
@@ -53,6 +58,7 @@ class AudioFilesService : Service() {
                 Log.i("Debug", "Found ${cursor.count} songs")
                 //return songs array
                 for(i in 0..<cursor.count){
+                    //TODO make it faster (getSongThumbnail takes a lot of time)
                     yield(SongModel(
                         cursor.getLong(idColumn),
                         cursor.getString(titleColumn),
