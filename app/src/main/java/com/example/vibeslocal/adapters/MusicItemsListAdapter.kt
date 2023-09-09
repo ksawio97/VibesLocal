@@ -40,13 +40,12 @@ class MusicItemsListAdapter(private var songsList: MutableList<SongModel>) :
             return songsList.size
         }
 
-        fun addSongs(newSongs: List<SongModel>){
+        fun setSongs(newSongs: List<SongModel>){
+            songsList.clear()
             songsList.addAll(newSongs)
-        }
-
-        fun updateChanges(){
             notifyDataSetChanged()
         }
+
         inner class SongHolder(itemView: View, listener: OnItemClickListener) : RecyclerView.ViewHolder(itemView) {
             val songTitle : TextView = itemView.findViewById(R.id.song_title)
             val songAuthor : TextView = itemView.findViewById(R.id.song_author)

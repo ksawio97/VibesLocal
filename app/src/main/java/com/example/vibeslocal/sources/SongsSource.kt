@@ -1,13 +1,9 @@
-package com.example.vibeslocal.services
+package com.example.vibeslocal.sources
 
-import android.app.Service
 import android.content.ContentResolver
-import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.media.MediaMetadataRetriever
-import android.os.Binder
-import android.os.IBinder
 import android.provider.MediaStore
 import android.util.Log
 import com.example.vibeslocal.models.SongModel
@@ -17,27 +13,14 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 
-class AudioFilesService : Service() {
-    private val binder = AudioFilesBinder()
-
-    override fun onBind(intent: Intent): IBinder {
-        return binder
-    }
-
-    inner class AudioFilesBinder : Binder() {
-        fun getService(): AudioFilesService {
-            return this@AudioFilesService
-        }
-    }
-
-    //TODO make this function load data and add it incrementally (with no need to wait for all elements)
-    suspend fun getSongsData(contentResolver: ContentResolver) : List<SongModel>? = coroutineScope {
+class SongsSource(private val contentResolver: ContentResolver) {
+    suspend fun loadSongsData() : List<SongModel>? = coroutineScope {
         val projection = arrayOf(
             MediaStore.Audio.Media._ID,
             MediaStore.Audio.Media.TITLE,
             MediaStore.Audio.Media.ARTIST,
             MediaStore.Audio.Media.DATA
-            )
+        )
         val selection = null
         val selectionArgs = null
         val sortOrder = null
