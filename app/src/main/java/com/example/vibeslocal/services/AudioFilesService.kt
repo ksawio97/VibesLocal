@@ -14,7 +14,7 @@ import com.example.vibeslocal.models.SongModel
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
-import java.io.ByteArrayOutputStream
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 
 class AudioFilesService : Service() {
@@ -31,7 +31,7 @@ class AudioFilesService : Service() {
     }
 
     //TODO make this function load data and add it incrementally (with no need to wait for all elements)
-    fun getSongsData(contentResolver: ContentResolver) : Sequence<SongModel> = sequence {
+    suspend fun getSongsData(contentResolver: ContentResolver) : List<SongModel>? = coroutineScope {
         val projection = arrayOf(
             MediaStore.Audio.Media._ID,
             MediaStore.Audio.Media.TITLE,
@@ -54,21 +54,27 @@ class AudioFilesService : Service() {
             val artistColumn = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ARTIST)
             val filePathColumn = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA)
 
+            val songModelListDeferred = ArrayList<Deferred<SongModel>>()
             if (cursor.moveToNext()) {
                 Log.i("Debug", "Found ${cursor.count} songs")
-                //return songs array
-                for(i in 0..<cursor.count){
-                    //TODO make it faster (getSongThumbnail takes a lot of time)
-                    yield(SongModel(
-                        cursor.getLong(idColumn),
-                        cursor.getString(titleColumn),
-                        cursor.getString(artistColumn),
-                        getSongThumbnail(cursor.getString(filePathColumn))
-                    ))
+                repeat(cursor.count) {
+                    //load before async to avoid getting other songs data
+                    val id = cursor.getLong(idColumn)
+                    val title = cursor.getString(titleColumn)
+                    val artist = cursor.getString(artistColumn)
+                    val filePath = cursor.getString(filePathColumn)
+
+                    val songModelDeferred = async(Dispatchers.IO) {
+                        SongModel(id, title, artist, getSongThumbnail(filePath))
+                    }
+                    songModelListDeferred.add(songModelDeferred)
                     cursor.moveToNext()
                 }
             }
+
+            return@coroutineScope songModelListDeferred.awaitAll()
         }
+        return@coroutineScope null
     }
 
     private fun getSongThumbnail(filePath: String): Bitmap? {

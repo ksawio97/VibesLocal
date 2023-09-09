@@ -8,10 +8,8 @@ import com.example.vibeslocal.services.AudioFilesService
 
 class MusicItemsViewModel(private val audioFilesService: AudioFilesService) : ViewModel() {
 
-    fun loadData(contentResolver: ContentResolver, addSong: (newSong: SongModel) -> Unit) {
+    suspend fun loadData(contentResolver: ContentResolver): List<SongModel>? {
         Log.i("Debug", "MusicItemsViewModel loadData")
-        audioFilesService.getSongsData(contentResolver).forEach { song ->
-            addSong(song)
-        }
+        return audioFilesService.getSongsData(contentResolver)
     }
 }

@@ -56,8 +56,10 @@ class MusicItemsFragment : Fragment() {
 
         lifecycleScope.launch {
             withContext(Dispatchers.IO) {
-                if (activity?.contentResolver != null)
-                    viewModel.loadData(activity?.contentResolver!!, musicItemsListAdapter::addSong)
+                if (activity?.contentResolver == null)
+                    return@withContext
+                val songs = viewModel.loadData(activity?.contentResolver!!) ?: return@withContext
+                musicItemsListAdapter.addSongs(songs)
             }
         }.invokeOnCompletion {
             musicItemsListAdapter.updateChanges()
