@@ -43,7 +43,7 @@ class MusicItemsListAdapter(private var songsList: MutableList<SongModel>) :
             return songsList.size
         }
 
-        fun setSongs(newSongs: List<SongModel>){
+        fun setSongs(newSongs: Collection<SongModel>){
             songsList.clear()
             songsList.addAll(newSongs)
             notifyDataSetChanged()

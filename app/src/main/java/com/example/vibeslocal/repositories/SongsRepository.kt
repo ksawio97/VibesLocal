@@ -15,7 +15,21 @@ class SongsRepository(private val songsSource: SongsSource) {
         }
     }
 
-    fun getAll() : List<SongModel> {
+    fun getAll() : Collection<SongModel> {
         return songs
+    }
+
+    fun getSongById(id : Long): SongModel? {
+        return songs.find { it.id == id}
+    }
+
+    fun <T> getMappedNotNullSongs(function: (song: SongModel) -> T?) : Collection<T> {
+        return songs.mapNotNull(function)
+    }
+    fun <T> getMappedSongs(function: (song: SongModel) -> T) : Collection<T> {
+        return songs.map(function)
+    }
+    fun getFilteredSongs(function: (song: SongModel) -> Boolean) : Collection<SongModel> {
+        return songs.filter(function)
     }
 }

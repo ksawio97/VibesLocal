@@ -1,6 +1,5 @@
 package com.example.vibeslocal.viewmodels
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.RecyclerView
@@ -8,11 +7,12 @@ import com.example.vibeslocal.adapters.MusicItemsListAdapter
 import com.example.vibeslocal.models.SongModel
 import com.example.vibeslocal.repositories.SongsRepository
 import com.example.vibeslocal.services.MediaPlayerService
+import com.example.vibeslocal.services.SongsQueueService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class MusicItemsViewModel(private val songsRepository: SongsRepository) : ViewModel() {
+class MusicItemsViewModel(private val songsRepository: SongsRepository, private val songsQueueService: SongsQueueService) : ViewModel() {
     private lateinit var musicItemsListAdapter: MusicItemsListAdapter
     //TODO delete it when SongsRepository will be observable
     private var viewLoaded = false
@@ -30,8 +30,20 @@ class MusicItemsViewModel(private val songsRepository: SongsRepository) : ViewMo
             override fun onItemClick(songModel: SongModel?) {
                 if(songModel == null)
                     return
-                Log.i("Debug", "Playing song ${songModel.title}")
-                mediaPlayerService?.play(songModel.uri)
+
+                songsRepository.getSongById(songModel.id).let{
+                    if (it == null)
+                        return
+                    val songs = songsRepository.getMappedNotNullSongs { song ->
+                        if (song.id >= songModel.id)
+                            return@getMappedNotNullSongs song.id
+                        null
+                    }
+
+                    songsQueueService.setQueue(songs)
+                }
+
+                mediaPlayerService?.startPlayback()
             }
         })
 
