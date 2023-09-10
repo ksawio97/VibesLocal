@@ -1,6 +1,7 @@
 package com.example.vibeslocal.sources
 
 import android.content.ContentResolver
+import android.content.ContentUris
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.media.MediaMetadataRetriever
@@ -48,7 +49,7 @@ class SongsSource(private val contentResolver: ContentResolver) {
                     val filePath = cursor.getString(filePathColumn)
 
                     val songModelDeferred = async(Dispatchers.IO) {
-                        SongModel(id, title, artist, getSongThumbnail(filePath))
+                        SongModel(id, title, artist, ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, id), getSongThumbnail(filePath))
                     }
                     songModelListDeferred.add(songModelDeferred)
                     cursor.moveToNext()

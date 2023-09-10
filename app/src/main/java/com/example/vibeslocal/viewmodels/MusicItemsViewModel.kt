@@ -1,11 +1,13 @@
 package com.example.vibeslocal.viewmodels
 
-import android.widget.Toast
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.RecyclerView
 import com.example.vibeslocal.adapters.MusicItemsListAdapter
+import com.example.vibeslocal.models.SongModel
 import com.example.vibeslocal.repositories.SongsRepository
+import com.example.vibeslocal.services.MediaPlayerService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -15,15 +17,21 @@ class MusicItemsViewModel(private val songsRepository: SongsRepository) : ViewMo
     //TODO delete it when SongsRepository will be observable
     private var viewLoaded = false
 
-    fun ConfigureRecyclerView(recyclerView: RecyclerView, clickAction: (text: String) -> Toast) {
+    var mediaPlayerService: MediaPlayerService? = null
+    var isBound = false
+
+    fun ConfigureRecyclerView(recyclerView: RecyclerView) {
         recyclerView.setHasFixedSize(true)
         musicItemsListAdapter = MusicItemsListAdapter(songsRepository.getAll().toMutableList())
         recyclerView.adapter = musicItemsListAdapter
 
 
         musicItemsListAdapter.setOnItemClickListener(object: MusicItemsListAdapter.OnItemClickListener {
-            override fun onItemClick(position: Int) {
-                clickAction("You clicked song nr $position!").show()
+            override fun onItemClick(songModel: SongModel?) {
+                if(songModel == null)
+                    return
+                Log.i("Debug", "Playing song ${songModel.title}")
+                mediaPlayerService?.play(songModel.uri)
             }
         })
 

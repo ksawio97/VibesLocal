@@ -14,7 +14,7 @@ class MusicItemsListAdapter(private var songsList: MutableList<SongModel>) :
 
         private lateinit var onClickListener : OnItemClickListener
         interface OnItemClickListener {
-            fun onItemClick(position: Int)
+            fun onItemClick(songModel: SongModel?)
         }
 
         fun setOnItemClickListener(listener: OnItemClickListener) {
@@ -28,8 +28,11 @@ class MusicItemsListAdapter(private var songsList: MutableList<SongModel>) :
 
         override fun onBindViewHolder(holder: SongHolder, position: Int) {
             val currentItem = songsList[position]
+            holder.songModel = currentItem
             holder.songTitle.text = currentItem.title
             holder.songAuthor.text = currentItem.artist
+
+
             if (currentItem.thumbnail == null)
                 holder.songThumbnail.setImageResource(R.drawable.unknown)
             else
@@ -47,13 +50,14 @@ class MusicItemsListAdapter(private var songsList: MutableList<SongModel>) :
         }
 
         inner class SongHolder(itemView: View, listener: OnItemClickListener) : RecyclerView.ViewHolder(itemView) {
+            var songModel: SongModel? = null
             val songTitle : TextView = itemView.findViewById(R.id.song_title)
             val songAuthor : TextView = itemView.findViewById(R.id.song_author)
             val songThumbnail : ImageView = itemView.findViewById(R.id.song_thumbnail)
 
             init {
                 itemView.setOnClickListener {
-                    listener.onItemClick(adapterPosition)
+                    listener.onItemClick(songModel)
                 }
             }
         }
