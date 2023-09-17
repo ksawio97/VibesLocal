@@ -50,4 +50,5 @@ dependencies {
 
     val koin_android_version = "3.4.3"
     implementation("io.insert-koin:koin-android:$koin_android_version")
+    implementation("androidx.core:core-splashscreen:1.0.1")
 }

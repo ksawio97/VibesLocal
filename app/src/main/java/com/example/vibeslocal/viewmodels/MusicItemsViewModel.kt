@@ -8,14 +8,11 @@ import com.example.vibeslocal.models.SongModel
 import com.example.vibeslocal.repositories.SongsRepository
 import com.example.vibeslocal.services.MediaPlayerService
 import com.example.vibeslocal.services.SongsQueueService
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import org.koin.core.component.KoinComponent
 
-class MusicItemsViewModel(private val songsRepository: SongsRepository, private val songsQueueService: SongsQueueService) : ViewModel() {
+class MusicItemsViewModel(private val songsRepository: SongsRepository, private val songsQueueService: SongsQueueService) : ViewModel(), KoinComponent {
     private lateinit var musicItemsListAdapter: MusicItemsListAdapter
-    //TODO delete it when SongsRepository will be observable
-    private var viewLoaded = false
 
     var mediaPlayerService: MediaPlayerService? = null
     var isBound = false
@@ -24,7 +21,6 @@ class MusicItemsViewModel(private val songsRepository: SongsRepository, private 
         recyclerView.setHasFixedSize(true)
         musicItemsListAdapter = MusicItemsListAdapter(songsRepository.getAll().toMutableList())
         recyclerView.adapter = musicItemsListAdapter
-
 
         musicItemsListAdapter.setOnItemClickListener(object: MusicItemsListAdapter.OnItemClickListener {
             override fun onItemClick(songModel: SongModel?) {
@@ -48,22 +44,13 @@ class MusicItemsViewModel(private val songsRepository: SongsRepository, private 
         })
 
     }
-    fun loadDataToRepository() {
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                songsRepository.loadData()
-            }
-        }.invokeOnCompletion {
-            //TODO delete it when SongsRepository will be observable
-            if (viewLoaded)
-                musicItemsListAdapter.setSongs(songsRepository.getAll())
-        }
-    }
 
     fun loadDataToAdapter() {
-        //TODO delete it when SongsRepository will be observable and add observe method
-        viewLoaded = true
-
         musicItemsListAdapter.setSongs(songsRepository.getAll())
+        songsRepository.onSongsChanged {
+            viewModelScope.launch {
+                musicItemsListAdapter.setSongs(it)
+            }
+        }
     }
 }
