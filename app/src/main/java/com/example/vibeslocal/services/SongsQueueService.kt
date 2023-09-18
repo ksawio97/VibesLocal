@@ -23,7 +23,7 @@ class SongsQueueService : Service() {
     }
 
     fun getCurrentSong() : Long {
-        return if (songsQueue.size > currentSong) songsQueue[currentSong] else -1
+        return if (songsQueue.size > currentSong && currentSong >= 0) songsQueue[currentSong] else -1
     }
 
     fun goToNextSong() : Boolean{
