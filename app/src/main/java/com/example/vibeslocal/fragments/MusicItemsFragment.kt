@@ -22,7 +22,7 @@ class MusicItemsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         val view = inflater.inflate(R.layout.fragment_music_items, container, false)
-        viewModel.ConfigureRecyclerView(view.findViewById(R.id.music_items_list))
+        viewModel.configureRecyclerView(view.findViewById(R.id.music_items_list))
 
         return view
     }

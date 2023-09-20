@@ -3,6 +3,7 @@ package com.example.vibeslocal.di
 import com.example.vibeslocal.repositories.SongsRepository
 import com.example.vibeslocal.services.MediaPlayerService
 import com.example.vibeslocal.services.SongsQueueService
+import com.example.vibeslocal.services.SongThumbnailService
 import com.example.vibeslocal.sources.SongsSource
 import com.example.vibeslocal.viewmodels.MainViewModel
 import com.example.vibeslocal.viewmodels.MusicItemsViewModel
@@ -12,7 +13,8 @@ import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 
 val appModule = module {
-    single { SongsSource(androidContext().contentResolver) }
+    singleOf(::SongThumbnailService)
+    single { SongsSource(androidContext().contentResolver, get()) }
     singleOf(::SongsRepository)
     singleOf(::SongsQueueService)
     singleOf(::MediaPlayerService)

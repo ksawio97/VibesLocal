@@ -10,7 +10,7 @@ import com.example.vibeslocal.models.SongModel
 import com.example.vibeslocal.repositories.SongsRepository
 import org.koin.android.ext.android.inject
 
-class MediaPlayerService() : Service() {
+class MediaPlayerService : Service() {
     private val binder = MediaPlayerBinder()
     private var mediaPlayer: MediaPlayer = MediaPlayer()
 
@@ -22,7 +22,7 @@ class MediaPlayerService() : Service() {
         }
     }
 
-    override fun onBind(intent: Intent?): IBinder? {
+    override fun onBind(intent: Intent?): IBinder {
         return binder
     }
 

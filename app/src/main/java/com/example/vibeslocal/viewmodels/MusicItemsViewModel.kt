@@ -7,19 +7,20 @@ import com.example.vibeslocal.adapters.MusicItemsListAdapter
 import com.example.vibeslocal.models.SongModel
 import com.example.vibeslocal.repositories.SongsRepository
 import com.example.vibeslocal.services.MediaPlayerService
+import com.example.vibeslocal.services.SongThumbnailService
 import com.example.vibeslocal.services.SongsQueueService
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 
-class MusicItemsViewModel(private val songsRepository: SongsRepository, private val songsQueueService: SongsQueueService) : ViewModel(), KoinComponent {
+class MusicItemsViewModel(private val songsRepository: SongsRepository, private val songsQueueService: SongsQueueService, private val songThumbnailService: SongThumbnailService) : ViewModel(), KoinComponent {
     private lateinit var musicItemsListAdapter: MusicItemsListAdapter
 
     var mediaPlayerService: MediaPlayerService? = null
     var isBound = false
 
-    fun ConfigureRecyclerView(recyclerView: RecyclerView) {
+    fun configureRecyclerView(recyclerView: RecyclerView) {
         recyclerView.setHasFixedSize(true)
-        musicItemsListAdapter = MusicItemsListAdapter(songsRepository.getAll().toMutableList())
+        musicItemsListAdapter = MusicItemsListAdapter(songsRepository.getAll().toMutableList(), songThumbnailService::getThumbnail)
         recyclerView.adapter = musicItemsListAdapter
 
         musicItemsListAdapter.setOnItemClickListener(object: MusicItemsListAdapter.OnItemClickListener {

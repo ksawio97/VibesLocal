@@ -1,5 +1,6 @@
 package com.example.vibeslocal.adapters
 
+import android.graphics.Bitmap
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.vibeslocal.R
 import com.example.vibeslocal.models.SongModel
 //TODO change songsList to be repos class with its own methods to manipulate data
-class MusicItemsListAdapter(private var songsList: MutableList<SongModel>) :
+class MusicItemsListAdapter(private var songsList: MutableList<SongModel>, private val getThumbnail: (Long) -> Bitmap?) :
     RecyclerView.Adapter<MusicItemsListAdapter.SongHolder>() {
 
         private lateinit var onClickListener : OnItemClickListener
@@ -31,12 +32,12 @@ class MusicItemsListAdapter(private var songsList: MutableList<SongModel>) :
             holder.songModel = currentItem
             holder.songTitle.text = currentItem.title
             holder.songAuthor.text = currentItem.artist
+            val thumbnail = getThumbnail(currentItem.albumId)
 
-
-            if (currentItem.thumbnail == null)
+            if (thumbnail == null)
                 holder.songThumbnail.setImageResource(R.drawable.unknown)
             else
-                holder.songThumbnail.setImageBitmap(currentItem.thumbnail)
+                holder.songThumbnail.setImageBitmap(thumbnail)
         }
 
         override fun getItemCount(): Int {
@@ -46,6 +47,7 @@ class MusicItemsListAdapter(private var songsList: MutableList<SongModel>) :
         fun setSongs(newSongs: Collection<SongModel>){
             songsList.clear()
             songsList.addAll(newSongs)
+            //TODO better notifications on changes
             notifyDataSetChanged()
         }
 
