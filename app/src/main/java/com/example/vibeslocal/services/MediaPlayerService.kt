@@ -35,6 +35,13 @@ class MediaPlayerService : Service() {
         mediaPlayer.release()
     }
 
+    fun pausePlayback() {
+        if (mediaPlayer.isPlaying)
+            mediaPlayer.pause()
+        else
+            mediaPlayer.start()
+    }
+
     fun getCurrentSong() : SongModel? {
         val currSongId = songsQueueService.getCurrentSong()
         return songsRepository.getSongById(currSongId)
