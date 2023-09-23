@@ -1,5 +1,6 @@
 package com.example.vibeslocal.viewmodels
 
+import android.annotation.SuppressLint
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.RecyclerView
@@ -15,8 +16,8 @@ import org.koin.core.component.KoinComponent
 class MusicItemsViewModel(private val songsRepository: SongsRepository, private val songsQueueService: SongsQueueService, private val songThumbnailService: SongThumbnailService) : ViewModel(), KoinComponent {
     private lateinit var musicItemsListAdapter: MusicItemsListAdapter
 
+    @SuppressLint("StaticFieldLeak")
     var mediaPlayerService: MediaPlayerService? = null
-    var isBound = false
 
     fun configureRecyclerView(recyclerView: RecyclerView) {
         recyclerView.setHasFixedSize(true)

@@ -41,12 +41,10 @@ class MusicItemsFragment : Fragment() {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
             val binder = service as MediaPlayerService.MediaPlayerBinder
             viewModel.mediaPlayerService = binder.getService()
-            viewModel.isBound = true
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {
             viewModel.mediaPlayerService = null
-            viewModel.isBound = false
         }
     }
 }
