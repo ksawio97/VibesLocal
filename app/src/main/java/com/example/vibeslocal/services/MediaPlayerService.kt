@@ -47,6 +47,16 @@ class MediaPlayerService : Service() {
         return songsRepository.getSongById(currSongId)
     }
 
+    fun playPreviousSong() {
+        if(songsQueueService.goToPreviousSong())
+            playCurrentSong()
+    }
+
+    fun playNextSong() {
+        if(songsQueueService.goToNextSong())
+            playCurrentSong()
+    }
+
     private fun playCurrentSong() {
         getCurrentSong().let {
             if(it == null)

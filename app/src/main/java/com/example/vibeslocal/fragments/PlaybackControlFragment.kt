@@ -29,12 +29,23 @@ class PlaybackControlFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val pauseButton = view.findViewById<ImageButton>(R.id.imageButton)
+        val pauseButton = view.findViewById<ImageButton>(R.id.pauseButton)
 
         pauseButton.setOnClickListener {
             viewModel.pauseSong()
         }
 
+        val previousButton = view.findViewById<ImageButton>(R.id.previousButton)
+
+        previousButton.setOnClickListener {
+            viewModel.previousSong()
+        }
+
+        val nextButton = view.findViewById<ImageButton>(R.id.nextButton)
+
+        nextButton.setOnClickListener {
+            viewModel.nextSong()
+        }
 
         //connect to MediaPlayerService
         val intent = Intent(requireContext(), MediaPlayerService::class.java)

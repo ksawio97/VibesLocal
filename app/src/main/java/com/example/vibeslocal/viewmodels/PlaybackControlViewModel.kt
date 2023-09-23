@@ -12,4 +12,11 @@ class PlaybackControlViewModel() : ViewModel() {
         mediaPlayerService?.pausePlayback()
     }
 
+    fun previousSong() {
+        mediaPlayerService?.playPreviousSong()
+    }
+
+    fun nextSong() {
+        mediaPlayerService?.playNextSong()
+    }
 }

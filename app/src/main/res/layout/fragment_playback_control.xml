@@ -7,11 +7,29 @@
     tools:context=".fragments.PlaybackControlFragment">
 
     <ImageButton
-        android:id="@+id/imageButton"
+        android:id="@+id/previousButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:background="@color/black"
+        android:padding="4dp"
+        android:src="@android:drawable/ic_media_previous" />
+
+    <ImageButton
+        android:id="@+id/pauseButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:background="@color/black"
         android:padding="4dp"
         android:src="@android:drawable/ic_media_pause" />
+
+    <ImageButton
+        android:id="@+id/nextButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:background="@color/black"
+        android:padding="4dp"
+        android:src="@android:drawable/ic_media_next" />
 </LinearLayout>
