@@ -22,7 +22,11 @@ class MediaPlayerService : Service(), ICustomEventManagerClass<MediaPlayerServic
 
     private val isQueuePlaying = IsQueuePlaying()
     private val customEventManager: CustomEventManager<Events> =
-        CustomEventManager(mapOf(Pair(Events.PauseChangedEvent,  CustomEvent()), Pair(Events.IsQueuePlayingChangedEvent, isQueuePlaying)))
+        CustomEventManager(mapOf(
+            Pair(Events.PauseChangedEvent,  CustomEvent()),
+            Pair(Events.IsQueuePlayingChangedEvent, isQueuePlaying),
+            Pair(Events.CurrentSongChangedEvent, CustomEvent()))
+        )
 
     inner class MediaPlayerBinder : Binder() {
         fun getService() : MediaPlayerService{
@@ -37,6 +41,8 @@ class MediaPlayerService : Service(), ICustomEventManagerClass<MediaPlayerServic
     fun startPlayback() {
         mediaPlayer.reset()
         playCurrentSong()
+        customEventManager.notifyEvent(Events.CurrentSongChangedEvent, getCurrentSong())
+        customEventManager.notifyEvent(Events.PauseChangedEvent, true)
         isQueuePlaying.setQueuePlaying(true)
     }
 
@@ -60,14 +66,17 @@ class MediaPlayerService : Service(), ICustomEventManagerClass<MediaPlayerServic
     }
 
     fun playPreviousSong() {
-        if(songsQueueService.goToPreviousSong())
+        if(songsQueueService.goToPreviousSong()) {
             playCurrentSong()
+            customEventManager.notifyEvent(Events.CurrentSongChangedEvent, getCurrentSong())
+        }
     }
 
     fun playNextSong() {
-        if(songsQueueService.goToNextSong())
+        if(songsQueueService.goToNextSong()) {
             playCurrentSong()
-        isQueuePlaying.setQueuePlaying(true)
+            customEventManager.notifyEvent(Events.CurrentSongChangedEvent, getCurrentSong())
+        }
     }
 
     private fun playCurrentSong() {
@@ -95,6 +104,7 @@ class MediaPlayerService : Service(), ICustomEventManagerClass<MediaPlayerServic
             // Handle any errors
             mediaPlayer.setOnErrorListener { mp, what, extra ->
                 Log.i(TAG, "Song ${it.title} had an error")
+                isQueuePlaying.setQueuePlaying(false)
                 mp.reset()
                 stopPlayback()
                 false // Return false if you want to handle errors yourself
@@ -124,7 +134,8 @@ class MediaPlayerService : Service(), ICustomEventManagerClass<MediaPlayerServic
 
     enum class Events {
         IsQueuePlayingChangedEvent,
-        PauseChangedEvent
+        PauseChangedEvent,
+        CurrentSongChangedEvent
     }
 
     override fun <T> subscribeToEvent(event: Events, action: (T) -> Unit) {

@@ -8,6 +8,7 @@ import com.example.vibeslocal.sources.SongsSource
 import com.example.vibeslocal.viewmodels.MainViewModel
 import com.example.vibeslocal.viewmodels.MusicItemsViewModel
 import com.example.vibeslocal.viewmodels.PlaybackControlViewModel
+import com.example.vibeslocal.viewmodels.CurrentSongItemViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModelOf
 import org.koin.core.module.dsl.singleOf
@@ -19,6 +20,7 @@ val appModule = module {
     singleOf(::SongsRepository)
     singleOf(::SongsQueueService)
     singleOf(::MediaPlayerService)
+    viewModelOf(::CurrentSongItemViewModel)
     viewModelOf(::MainViewModel)
     viewModelOf(::MusicItemsViewModel)
     viewModelOf(::PlaybackControlViewModel)
