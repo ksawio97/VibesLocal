@@ -60,15 +60,15 @@ class PlaybackControlFragment : Fragment() {
                 val binder = service as MediaPlayerService.MediaPlayerBinder
                 viewModel.mediaPlayerService = binder.getService()
 
-                viewModel.subscribeToMediaPlayerEvent(MediaPlayerService.Events.pauseChangedEvent, togglePauseButtonIcon)
-                viewModel.subscribeToMediaPlayerEvent(MediaPlayerService.Events.isQueuePlayingChangedEvent, toggleShowPlaybackControl)
+                viewModel.subscribeToMediaPlayerEvent(MediaPlayerService.Events.PauseChangedEvent, togglePauseButtonIcon)
+                viewModel.subscribeToMediaPlayerEvent(MediaPlayerService.Events.IsQueuePlayingChangedEvent, toggleShowPlaybackControl)
             }
 
             override fun onServiceDisconnected(name: ComponentName?) {
                 viewModel.mediaPlayerService = null
 
-                viewModel.unsubscribeToMediaPlayerEvent(MediaPlayerService.Events.pauseChangedEvent, togglePauseButtonIcon)
-                viewModel.unsubscribeToMediaPlayerEvent(MediaPlayerService.Events.isQueuePlayingChangedEvent, toggleShowPlaybackControl)
+                viewModel.unsubscribeToMediaPlayerEvent(MediaPlayerService.Events.PauseChangedEvent, togglePauseButtonIcon)
+                viewModel.unsubscribeToMediaPlayerEvent(MediaPlayerService.Events.IsQueuePlayingChangedEvent, toggleShowPlaybackControl)
             }
         }
 

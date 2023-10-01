@@ -7,20 +7,22 @@ import android.os.Binder
 import android.os.IBinder
 import android.util.Log
 import com.example.vibeslocal.generic.CustomEvent
+import com.example.vibeslocal.generic.CustomEventManager
+import com.example.vibeslocal.generic.ICustomEventManagerClass
 import com.example.vibeslocal.models.SongModel
 import com.example.vibeslocal.repositories.SongsRepository
 import org.koin.android.ext.android.inject
 
-class MediaPlayerService : Service() {
+class MediaPlayerService : Service(), ICustomEventManagerClass<MediaPlayerService.Events> {
     private val binder = MediaPlayerBinder()
     private var mediaPlayer: MediaPlayer = MediaPlayer()
 
     private val songsQueueService : SongsQueueService by inject()
     private val songsRepository: SongsRepository by inject()
 
-    private val pauseChangedEvent: CustomEvent<Boolean> = CustomEvent()
-
     private val isQueuePlaying = IsQueuePlaying()
+    private val customEventManager: CustomEventManager<Events> =
+        CustomEventManager(mapOf(Pair(Events.PauseChangedEvent,  CustomEvent()), Pair(Events.IsQueuePlayingChangedEvent, isQueuePlaying)))
 
     inner class MediaPlayerBinder : Binder() {
         fun getService() : MediaPlayerService{
@@ -49,7 +51,7 @@ class MediaPlayerService : Service() {
         else
             mediaPlayer.start()
 
-        pauseChangedEvent.notify(mediaPlayer.isPlaying)
+        customEventManager.notifyEvent(Events.PauseChangedEvent, mediaPlayer.isPlaying)
     }
 
     fun getCurrentSong() : SongModel? {
@@ -66,20 +68,6 @@ class MediaPlayerService : Service() {
         if(songsQueueService.goToNextSong())
             playCurrentSong()
         isQueuePlaying.setQueuePlaying(true)
-    }
-
-    fun subscribeToEvent(event: Events, action: (Boolean) -> Unit) {
-        when (event) {
-            Events.pauseChangedEvent -> pauseChangedEvent.subscribe(action)
-            Events.isQueuePlayingChangedEvent -> isQueuePlaying.subscribe(action)
-        }
-    }
-
-    fun unsubscribeToEvent(event: Events, action: (Boolean) -> Unit) {
-        when (event) {
-            Events.pauseChangedEvent -> pauseChangedEvent.unsubscribe(action)
-            Events.isQueuePlayingChangedEvent -> isQueuePlaying.unsubscribe(action)
-        }
     }
 
     private fun playCurrentSong() {
@@ -114,11 +102,6 @@ class MediaPlayerService : Service() {
         }
     }
 
-    enum class Events {
-        isQueuePlayingChangedEvent,
-        pauseChangedEvent
-    }
-
     inner class IsQueuePlaying : CustomEvent<Boolean>() {
         private var isQueuePlaying = false
 
@@ -126,7 +109,7 @@ class MediaPlayerService : Service() {
             if(isQueuePlaying == newValue)
                 return
             isQueuePlaying = newValue
-            notify(isQueuePlaying)
+            customEventManager.notifyEvent(Events.IsQueuePlayingChangedEvent, isQueuePlaying)
         }
     }
 
@@ -137,5 +120,18 @@ class MediaPlayerService : Service() {
 
     companion object {
         const val TAG = "MediaPlayerService"
+    }
+
+    enum class Events {
+        IsQueuePlayingChangedEvent,
+        PauseChangedEvent
+    }
+
+    override fun <T> subscribeToEvent(event: Events, action: (T) -> Unit) {
+        customEventManager.subscribeToEvent(event, action)
+    }
+
+    override fun <T> unsubscribeToEvent(event: Events, action: (T) -> Unit) {
+        customEventManager.unsubscribeToEvent(event, action)
     }
 }
