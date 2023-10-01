@@ -9,8 +9,8 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.vibeslocal.R
 import com.example.vibeslocal.models.SongModel
-//TODO change songsList to be repos class with its own methods to manipulate data
-class MusicItemsListAdapter(private var songsList: MutableList<SongModel>, private val getThumbnail: (Long) -> Bitmap?) :
+
+class MusicItemsListAdapter(private var songsList: MutableList<SongModel>, private val getThumbnail: (Long) -> Bitmap) :
     RecyclerView.Adapter<MusicItemsListAdapter.SongHolder>() {
 
         private lateinit var onClickListener : OnItemClickListener
@@ -33,11 +33,7 @@ class MusicItemsListAdapter(private var songsList: MutableList<SongModel>, priva
             holder.songTitle.text = currentItem.title
             holder.songAuthor.text = currentItem.artist
             val thumbnail = getThumbnail(currentItem.albumId)
-
-            if (thumbnail == null)
-                holder.songThumbnail.setImageResource(R.drawable.unknown)
-            else
-                holder.songThumbnail.setImageBitmap(thumbnail)
+            holder.songThumbnail.setImageBitmap(thumbnail)
         }
 
         override fun getItemCount(): Int {
