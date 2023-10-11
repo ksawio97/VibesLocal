@@ -11,12 +11,9 @@ class SongsRepository(private val songsSource: SongsSource) {
 
     suspend fun loadData(){
         songs.clear()
-        songsSource.loadSongsData().let{
-            if (it == null)
-                return@let
-            songs.addAll(it)
-            songsChangedEvent.notify(songs)
-        }
+        val songsData = songsSource.loadSongsData() ?: return
+        songs.addAll(songsData)
+        songsChangedEvent.notify(songs)
     }
 
     fun getAll() : Collection<SongModel> {

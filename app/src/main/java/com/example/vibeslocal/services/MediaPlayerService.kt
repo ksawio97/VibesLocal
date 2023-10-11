@@ -20,7 +20,7 @@ class MediaPlayerService : Service(), ICustomEventManagerClass<MediaPlayerServic
     private val songsQueueService : SongsQueueService by inject()
     private val songsRepository: SongsRepository by inject()
 
-    private val isQueuePlaying = IsQueuePlaying()
+    private val isQueuePlaying = EventWithBooleanValue()
     private val customEventManager: CustomEventManager<Events> =
         CustomEventManager(mapOf(
             Pair(Events.PauseChangedEvent,  CustomEvent()),
@@ -38,17 +38,22 @@ class MediaPlayerService : Service(), ICustomEventManagerClass<MediaPlayerServic
         return binder
     }
 
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        Log.i(TAG, "onStartCommand")
+        return START_STICKY
+    }
+
     fun startPlayback() {
         mediaPlayer.reset()
         playCurrentSong()
         customEventManager.notifyEvent(Events.CurrentSongChangedEvent, getCurrentSong())
         customEventManager.notifyEvent(Events.PauseChangedEvent, true)
-        isQueuePlaying.setQueuePlaying(true)
+        isQueuePlaying.setValue(true)
     }
 
     fun stopPlayback() {
         mediaPlayer.release()
-        isQueuePlaying.setQueuePlaying(false)
+        isQueuePlaying.setValue(false)
     }
 
     fun pausePlayback() {
@@ -58,6 +63,12 @@ class MediaPlayerService : Service(), ICustomEventManagerClass<MediaPlayerServic
             mediaPlayer.start()
 
         customEventManager.notifyEvent(Events.PauseChangedEvent, mediaPlayer.isPlaying)
+    }
+    fun isPlaying() : Boolean {
+        return mediaPlayer.isPlaying
+    }
+    fun isQueuePlaying() : Boolean {
+        return isQueuePlaying.getIsQueuePlaying()
     }
 
     fun getCurrentSong() : SongModel? {
@@ -80,51 +91,54 @@ class MediaPlayerService : Service(), ICustomEventManagerClass<MediaPlayerServic
     }
 
     private fun playCurrentSong() {
-        getCurrentSong().let {
-            if(it == null)
-                return@playCurrentSong
-            mediaPlayer.reset()
-            mediaPlayer.setDataSource(applicationContext, it.uri)
-            mediaPlayer.prepareAsync()
+        val currSong = getCurrentSong() ?: return
 
-            // Set a callback for when the media is prepared
-            mediaPlayer.setOnPreparedListener { mp ->
-                // Start playback
-                Log.i(TAG, "Song ${it.title} just started")
-                mp.start()
-            }
+        mediaPlayer.reset()
+        mediaPlayer.setDataSource(applicationContext, currSong.uri)
+        mediaPlayer.prepareAsync()
 
-            // Set a callback for when the media completes
-            mediaPlayer.setOnCompletionListener { mp ->
-                // Handle completion, e.g., play the next track
-                Log.i(TAG, "Song ${it.title} just ended")
-                playNextSong()
-            }
+        // Set a callback for when the media is prepared
+        mediaPlayer.setOnPreparedListener { mp ->
+            // Start playback
+            Log.i(TAG, "Song ${currSong.title} just started")
+            mp.start()
+        }
 
-            // Handle any errors
-            mediaPlayer.setOnErrorListener { mp, what, extra ->
-                Log.i(TAG, "Song ${it.title} had an error")
-                isQueuePlaying.setQueuePlaying(false)
-                mp.reset()
-                stopPlayback()
-                false // Return false if you want to handle errors yourself
-            }
+        // Set a callback for when the media completes
+        mediaPlayer.setOnCompletionListener { mp ->
+            // Handle completion, e.g., play the next track
+            Log.i(TAG, "Song ${currSong.title} just ended")
+            playNextSong()
+        }
+
+        // Handle any errors
+        mediaPlayer.setOnErrorListener { mp, what, extra ->
+            Log.i(TAG, "Song ${currSong.title} had an error")
+            isQueuePlaying.setValue(false)
+            mp.reset()
+            stopPlayback()
+            false // Return false if you want to handle errors yourself
         }
     }
 
-    inner class IsQueuePlaying : CustomEvent<Boolean>() {
-        private var isQueuePlaying = false
+    inner class EventWithBooleanValue : CustomEvent<Boolean>() {
+        private var value = false
 
-        fun setQueuePlaying(newValue: Boolean) {
-            if(isQueuePlaying == newValue)
+        fun setValue(newValue: Boolean) {
+            if(value == newValue)
                 return
-            isQueuePlaying = newValue
-            customEventManager.notifyEvent(Events.IsQueuePlayingChangedEvent, isQueuePlaying)
+            value = newValue
+            notify(value)
+        }
+
+        fun getIsQueuePlaying() : Boolean {
+            return value
         }
     }
 
     override fun onDestroy() {
         super.onDestroy()
+        Log.i(TAG, "onDestroy")
         mediaPlayer.release()
     }
 

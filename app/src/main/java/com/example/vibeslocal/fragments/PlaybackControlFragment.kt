@@ -13,7 +13,9 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.LinearLayout
 import androidx.core.view.isVisible
+import androidx.fragment.app.FragmentContainerView
 import com.example.vibeslocal.R
+import com.example.vibeslocal.activities.PlaybackDetailsActivity
 import com.example.vibeslocal.services.MediaPlayerService
 import com.example.vibeslocal.viewmodels.PlaybackControlViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -33,6 +35,12 @@ class PlaybackControlFragment : Fragment() {
         val playbackControl = view.findViewById<LinearLayout>(R.id.playbackControl)
         playbackControl.visibility = View.GONE
 
+        val currentSongItem = view.findViewById<FragmentContainerView>(R.id.currSongItem)
+        currentSongItem.setOnClickListener {
+            val intent = Intent(requireContext(), PlaybackDetailsActivity::class.java)
+            startActivity(intent)
+        }
+
         //region setting up basic onClick actions
         val pauseButton = view.findViewById<ImageButton>(R.id.pauseButton)
 
@@ -47,18 +55,23 @@ class PlaybackControlFragment : Fragment() {
             pauseButton.setImageResource(icon)
         }
 
-        val toggleShowPlaybackControl : (Boolean) -> Unit = { queueNotEmpty ->
+        val toggleShowPlaybackControl : (Boolean) -> Unit = { isQueuePlaying ->
             //if it's not right
-            if (queueNotEmpty != playbackControl.isVisible)
-                playbackControl.visibility = if (queueNotEmpty) View.VISIBLE else View.GONE
+            if (isQueuePlaying != playbackControl.isVisible)
+                playbackControl.visibility = if (isQueuePlaying) View.VISIBLE else View.GONE
         }
 
         //handle connection
         val serviceConnection = object : ServiceConnection {
             override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
                 val binder = service as MediaPlayerService.MediaPlayerBinder
-                viewModel.mediaPlayerService = binder.getService()
 
+                val mediaService = binder.getService()
+
+                toggleShowPlaybackControl(mediaService.isQueuePlaying())
+                togglePauseButtonIcon(mediaService.isPlaying())
+
+                viewModel.mediaPlayerService = mediaService
                 viewModel.subscribeToMediaPlayerEvent(MediaPlayerService.Events.PauseChangedEvent, togglePauseButtonIcon)
                 viewModel.subscribeToMediaPlayerEvent(MediaPlayerService.Events.IsQueuePlayingChangedEvent, toggleShowPlaybackControl)
             }

@@ -50,7 +50,10 @@ class CurrentSongItemFragment : Fragment() {
         val serviceConnection = object : ServiceConnection {
             override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
                 val binder = service as MediaPlayerService.MediaPlayerBinder
-                viewModel.mediaPlayerService = binder.getService()
+
+                val mediaPlayerService = binder.getService()
+                viewModel.mediaPlayerService = mediaPlayerService
+                onCurrentSongChangedEvent(mediaPlayerService.getCurrentSong())
 
                 viewModel.subscribeToMediaPlayerEvent(MediaPlayerService.Events.CurrentSongChangedEvent, onCurrentSongChangedEvent)
             }
