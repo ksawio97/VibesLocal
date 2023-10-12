@@ -2,6 +2,7 @@ package com.example.vibeslocal.sources
 
 import android.content.ContentResolver
 import android.content.ContentUris
+import android.content.Context
 import android.provider.MediaStore
 import com.example.vibeslocal.models.SongModel
 import com.example.vibeslocal.services.SongThumbnailService
@@ -10,9 +11,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
-class SongsSource(private val contentResolver: ContentResolver, private val songThumbnailService: SongThumbnailService) {
+class SongsSource(private val songThumbnailService: SongThumbnailService) : KoinComponent {
     suspend fun loadSongsData() : List<SongModel>? = coroutineScope {
+        val context: Context by inject()
 
         val projection = arrayOf(
             MediaStore.Audio.Media._ID,
@@ -21,7 +25,7 @@ class SongsSource(private val contentResolver: ContentResolver, private val song
             MediaStore.Audio.Media.ALBUM_ID
         )
 
-        contentResolver.query(
+        context.contentResolver.query(
             MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
             projection,
             null,
@@ -49,7 +53,7 @@ class SongsSource(private val contentResolver: ContentResolver, private val song
                         if(loadedAlbumsThumbnails.contains(albumId))
                             return@async
                         loadedAlbumsThumbnails.add(albumId)
-                        songThumbnailService.putThumbnail(albumId, contentResolver)
+                        songThumbnailService.putThumbnail(albumId, context.contentResolver)
                     })
                     songModels.add(SongModel(id, title, artist, albumId, ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, id)))
 
