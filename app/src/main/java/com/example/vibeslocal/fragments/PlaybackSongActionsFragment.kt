@@ -11,54 +11,41 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
-import android.widget.LinearLayout
-import androidx.core.view.isVisible
-import androidx.fragment.app.FragmentContainerView
 import com.example.vibeslocal.R
-import com.example.vibeslocal.activities.PlaybackDetailsActivity
 import com.example.vibeslocal.services.MediaPlayerService
-import com.example.vibeslocal.viewmodels.PlaybackControlViewModel
-import org.koin.androidx.viewmodel.ext.android.viewModel
+import com.example.vibeslocal.viewmodels.PlaybackSongActionsViewModel
+import org.koin.android.ext.android.inject
 
-class PlaybackControlFragment : Fragment() {
-    private val viewModel: PlaybackControlViewModel by viewModel()
+class PlaybackSongActionsFragment : Fragment() {
+    private val viewModel: PlaybackSongActionsViewModel by inject()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_playback_control, container, false)
+    ): View {
+        return inflater.inflate(R.layout.fragment_playback_song_details, container, false)
     }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val playbackControl = view.findViewById<LinearLayout>(R.id.playbackControl)
-        playbackControl.visibility = View.GONE
-
-        val currentSongItem = view.findViewById<FragmentContainerView>(R.id.currSongItem)
-        currentSongItem.setOnClickListener {
-            val intent = Intent(requireContext(), PlaybackDetailsActivity::class.java)
-            startActivity(intent)
+        val previousButton = view.findViewById<ImageButton>(R.id.previous_song_button)
+        previousButton.setOnClickListener {
+            viewModel.playPrevious()
         }
-
-        //region setting up basic onClick actions
-        val pauseButton = view.findViewById<ImageButton>(R.id.pauseButton)
-
+        val nextButton = view.findViewById<ImageButton>(R.id.next_song_button)
+        nextButton.setOnClickListener {
+            viewModel.playNext()
+        }
+        val pauseButton = view.findViewById<ImageButton>(R.id.pause_song_button)
         pauseButton.setOnClickListener {
-            viewModel.pauseSong()
+            viewModel.pause()
         }
-        //endregion
 
         //actions that depend on serviceConnection
         val togglePauseButtonIcon : (Boolean) -> Unit = { isPlaying ->
             val icon = if (isPlaying) android.R.drawable.ic_media_pause else android.R.drawable.ic_media_play
             pauseButton.setImageResource(icon)
-        }
-
-        val toggleShowPlaybackControl : (Boolean) -> Unit = { isQueuePlaying ->
-            //if it's not right
-            if (isQueuePlaying != playbackControl.isVisible)
-                playbackControl.visibility = if (isQueuePlaying) View.VISIBLE else View.GONE
         }
 
         //handle connection
@@ -67,20 +54,16 @@ class PlaybackControlFragment : Fragment() {
                 val binder = service as MediaPlayerService.MediaPlayerBinder
 
                 val mediaPlayerService = binder.getService()
-
-                toggleShowPlaybackControl(mediaPlayerService.isQueuePlaying())
-                togglePauseButtonIcon(mediaPlayerService.isPlaying())
-
                 viewModel.mediaPlayerService = mediaPlayerService
+
+                togglePauseButtonIcon(mediaPlayerService.isPlaying())
                 viewModel.subscribeToMediaPlayerEvent(MediaPlayerService.Events.PauseChangedEvent, togglePauseButtonIcon)
-                viewModel.subscribeToMediaPlayerEvent(MediaPlayerService.Events.IsQueuePlayingChangedEvent, toggleShowPlaybackControl)
             }
 
             override fun onServiceDisconnected(name: ComponentName?) {
                 viewModel.mediaPlayerService = null
 
                 viewModel.unsubscribeToMediaPlayerEvent(MediaPlayerService.Events.PauseChangedEvent, togglePauseButtonIcon)
-                viewModel.unsubscribeToMediaPlayerEvent(MediaPlayerService.Events.IsQueuePlayingChangedEvent, toggleShowPlaybackControl)
             }
         }
 
