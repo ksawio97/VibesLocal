@@ -47,7 +47,7 @@ class SongThumbnailService : Service(), KoinComponent {
             if (parcelFileDescriptor != null) {
                 val albumArtBitmap = BitmapFactory.decodeFileDescriptor(parcelFileDescriptor.fileDescriptor)
                 parcelFileDescriptor.close()
-                Log.i("Debug", "Loaded ${loadedThumbnails.size}th cover")
+                Log.i(TAG, "Loaded ${loadedThumbnails.size}th cover")
                 return albumArtBitmap
             }
         } catch (e: FileNotFoundException) {
@@ -57,5 +57,9 @@ class SongThumbnailService : Service(), KoinComponent {
         }
 
         return null
+    }
+
+    companion object {
+        const val TAG = "SongThumbnailService"
     }
 }

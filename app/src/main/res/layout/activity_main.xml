@@ -7,15 +7,15 @@
     tools:context=".activities.MainActivity">
 
     <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/musicItemsFragmentView"
-        android:name="com.example.vibeslocal.fragments.MusicItemsFragment"
+        android:id="@+id/fragmentContainerView3"
+        android:name="com.example.vibeslocal.fragments.GroupingOptionsFragment"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:layout="@layout/fragment_music_items" />
+        tools:layout="@layout/fragment_grouping_options" />
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fragmentContainerView"
@@ -24,7 +24,7 @@
         android:layout_height="wrap_content"
         android:clickable="true"
         android:visibility="visible"
-        app:layout_constraintBottom_toBottomOf="@+id/musicItemsFragmentView"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         tools:layout="@layout/fragment_playback_control" />
