@@ -21,14 +21,12 @@ class MusicItemsFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val view = inflater.inflate(R.layout.fragment_music_items, container, false)
-        viewModel.configureRecyclerView(view.findViewById(R.id.music_items_list))
-
-        return view
+        return inflater.inflate(R.layout.fragment_music_items, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        viewModel.configureRecyclerView(view.findViewById(R.id.music_items_list))
         viewModel.loadDataToAdapter()
 
         //connect to MediaPlayerService

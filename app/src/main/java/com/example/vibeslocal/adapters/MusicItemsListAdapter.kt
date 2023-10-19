@@ -48,14 +48,15 @@ class MusicItemsListAdapter(private var songsList: MutableList<SongModel>, priva
         }
 
         inner class SongHolder(itemView: View, listener: OnItemClickListener) : RecyclerView.ViewHolder(itemView) {
-            var songModel: SongModel? = null
+            lateinit var songModel: SongModel
             val songTitle : TextView = itemView.findViewById(R.id.song_title)
             val songAuthor : TextView = itemView.findViewById(R.id.song_author)
             val songThumbnail : ImageView = itemView.findViewById(R.id.song_thumbnail)
 
             init {
                 itemView.setOnClickListener {
-                    listener.onItemClick(songModel)
+                    if (::songModel.isInitialized)
+                        listener.onItemClick(songModel)
                 }
             }
         }

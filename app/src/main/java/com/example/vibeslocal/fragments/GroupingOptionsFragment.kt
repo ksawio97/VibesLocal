@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.findNavController
 import com.example.vibeslocal.R
 import com.example.vibeslocal.viewmodels.GroupingOptionsViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -21,7 +22,6 @@ class GroupingOptionsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        viewModel.configureRecyclerView(view.findViewById(R.id.grouping_options))
+        viewModel.configureRecyclerView(view.findViewById(R.id.grouping_options), view.findNavController(), R.id.action_groupingOptionsFragment_to_musicItemsFragment)
     }
 }

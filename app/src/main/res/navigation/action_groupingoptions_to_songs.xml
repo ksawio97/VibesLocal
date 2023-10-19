@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/action_groupingoptions_to_songs"
+    app:startDestination="@id/groupingOptionsFragment">
+
+    <fragment
+        android:id="@+id/groupingOptionsFragment"
+        android:name="com.example.vibeslocal.fragments.GroupingOptionsFragment"
+        android:label="fragment_grouping_options"
+        tools:layout="@layout/fragment_grouping_options" >
+        <action
+            android:id="@+id/action_groupingOptionsFragment_to_musicItemsFragment"
+            app:destination="@id/musicItemsFragment" />
+    </fragment>
+        <fragment
+        android:id="@+id/musicItemsFragment"
+        android:name="com.example.vibeslocal.fragments.MusicItemsFragment"
+        android:label="fragment_music_items"
+        tools:layout="@layout/fragment_music_items" />
+</navigation>
