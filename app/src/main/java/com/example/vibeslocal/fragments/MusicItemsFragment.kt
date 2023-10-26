@@ -6,27 +6,23 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.os.Bundle
 import android.os.IBinder
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.vibeslocal.R
+import com.example.vibeslocal.databinding.FragmentMusicItemsBinding
 import com.example.vibeslocal.services.MediaPlayerService
 import com.example.vibeslocal.viewmodels.MusicItemsViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class MusicItemsFragment : Fragment() {
+class MusicItemsFragment : Fragment(R.layout.fragment_music_items) {
     private val viewModel : MusicItemsViewModel by viewModel()
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        return inflater.inflate(R.layout.fragment_music_items, container, false)
-    }
+    private lateinit var binding: FragmentMusicItemsBinding
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.configureRecyclerView(view.findViewById(R.id.music_items_list))
+        binding = FragmentMusicItemsBinding.bind(view)
+
+        viewModel.configureRecyclerView(binding.musicItemsList)
         viewModel.loadDataToAdapter()
 
         //connect to MediaPlayerService

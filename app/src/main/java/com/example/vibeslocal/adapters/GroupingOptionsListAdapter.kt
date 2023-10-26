@@ -6,8 +6,8 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.vibeslocal.R
+import com.example.vibeslocal.databinding.FragmentGroupingOptionBinding
 import com.example.vibeslocal.models.GroupingOptionModel
-import com.example.vibeslocal.models.SongModel
 
 class GroupingOptionsListAdapter(private var groupingOptionsList: List<GroupingOptionModel>)
     : RecyclerView.Adapter<GroupingOptionsListAdapter.GroupingOptionHolder>() {
@@ -37,8 +37,9 @@ class GroupingOptionsListAdapter(private var groupingOptionsList: List<GroupingO
     }
 
     inner class GroupingOptionHolder(itemView: View, listener: OnItemClickListener) : RecyclerView.ViewHolder(itemView) {
+        private val binding = FragmentGroupingOptionBinding.bind(itemView)
         lateinit var groupingOptionModel : GroupingOptionModel
-        val groupingOptionTitle : TextView = itemView.findViewById(R.id.option_title)
+        val groupingOptionTitle : TextView = binding.optionTitle
 
         init {
             itemView.setOnClickListener {

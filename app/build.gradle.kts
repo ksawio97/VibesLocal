@@ -8,6 +8,10 @@ android {
     namespace = "com.example.vibeslocal"
     compileSdk = 34
 
+    buildFeatures {
+        viewBinding = true
+    }
+
     defaultConfig {
         applicationId = "com.example.vibeslocal"
         minSdk = 24

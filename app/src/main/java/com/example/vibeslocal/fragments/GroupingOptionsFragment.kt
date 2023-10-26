@@ -1,27 +1,22 @@
 package com.example.vibeslocal.fragments
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import com.example.vibeslocal.R
+import com.example.vibeslocal.databinding.FragmentGroupingOptionsBinding
 import com.example.vibeslocal.viewmodels.GroupingOptionsViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class GroupingOptionsFragment : Fragment() {
+class GroupingOptionsFragment : Fragment(R.layout.fragment_grouping_options) {
     private val viewModel: GroupingOptionsViewModel by viewModel()
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_grouping_options, container, false)
-    }
+    private lateinit var binding: FragmentGroupingOptionsBinding
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.configureRecyclerView(view.findViewById(R.id.grouping_options), view.findNavController(), R.id.action_groupingOptionsFragment_to_musicItemsFragment)
+        binding = FragmentGroupingOptionsBinding.bind(view)
+
+        viewModel.configureRecyclerView(binding.groupingOptions, view.findNavController(), R.id.action_groupingOptionsFragment_to_musicItemsFragment)
     }
 }

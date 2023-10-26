@@ -6,46 +6,38 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.os.Bundle
 import android.os.IBinder
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import android.widget.ImageButton
+import androidx.fragment.app.Fragment
 import com.example.vibeslocal.R
+import com.example.vibeslocal.databinding.FragmentPlaybackSongDetailsBinding
 import com.example.vibeslocal.services.MediaPlayerService
 import com.example.vibeslocal.viewmodels.PlaybackSongActionsViewModel
 import org.koin.android.ext.android.inject
 
-class PlaybackSongActionsFragment : Fragment() {
+class PlaybackSongActionsFragment : Fragment(R.layout.fragment_playback_song_details) {
     private val viewModel: PlaybackSongActionsViewModel by inject()
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        return inflater.inflate(R.layout.fragment_playback_song_details, container, false)
-    }
+    private lateinit var binding: FragmentPlaybackSongDetailsBinding
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding = FragmentPlaybackSongDetailsBinding.bind(view)
 
-        val previousButton = view.findViewById<ImageButton>(R.id.previous_song_button)
-        previousButton.setOnClickListener {
+        //region setting up basic onClick actions
+        binding.previousSongButton.setOnClickListener {
             viewModel.playPrevious()
         }
-        val nextButton = view.findViewById<ImageButton>(R.id.next_song_button)
-        nextButton.setOnClickListener {
+        binding.nextSongButton.setOnClickListener {
             viewModel.playNext()
         }
-        val pauseButton = view.findViewById<ImageButton>(R.id.pause_song_button)
-        pauseButton.setOnClickListener {
+        binding.pauseSongButton.setOnClickListener {
             viewModel.pause()
         }
+        //endregion
 
         //actions that depend on serviceConnection
         val togglePauseButtonIcon : (Boolean) -> Unit = { isPlaying ->
             val icon = if (isPlaying) android.R.drawable.ic_media_pause else android.R.drawable.ic_media_play
-            pauseButton.setImageResource(icon)
+            binding.pauseSongButton.setImageResource(icon)
         }
 
         //handle connection

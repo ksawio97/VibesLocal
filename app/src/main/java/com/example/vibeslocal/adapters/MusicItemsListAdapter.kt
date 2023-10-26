@@ -8,6 +8,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.vibeslocal.R
+import com.example.vibeslocal.databinding.SongItemBinding
 import com.example.vibeslocal.models.SongModel
 
 class MusicItemsListAdapter(private var songsList: MutableList<SongModel>, private val getThumbnail: (Long) -> Bitmap) :
@@ -48,10 +49,11 @@ class MusicItemsListAdapter(private var songsList: MutableList<SongModel>, priva
         }
 
         inner class SongHolder(itemView: View, listener: OnItemClickListener) : RecyclerView.ViewHolder(itemView) {
+            private val binding = SongItemBinding.bind(itemView)
             lateinit var songModel: SongModel
-            val songTitle : TextView = itemView.findViewById(R.id.song_title)
-            val songAuthor : TextView = itemView.findViewById(R.id.song_author)
-            val songThumbnail : ImageView = itemView.findViewById(R.id.song_thumbnail)
+            val songTitle : TextView = binding.songTitle
+            val songAuthor : TextView = binding.songAuthor
+            val songThumbnail : ImageView = binding.songThumbnail
 
             init {
                 itemView.setOnClickListener {

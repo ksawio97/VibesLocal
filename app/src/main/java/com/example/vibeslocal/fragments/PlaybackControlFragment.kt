@@ -6,45 +6,32 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.os.Bundle
 import android.os.IBinder
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import android.widget.ImageButton
-import android.widget.LinearLayout
 import androidx.core.view.isVisible
-import androidx.fragment.app.FragmentContainerView
+import androidx.fragment.app.Fragment
 import com.example.vibeslocal.R
 import com.example.vibeslocal.activities.PlaybackDetailsActivity
+import com.example.vibeslocal.databinding.FragmentPlaybackControlBinding
 import com.example.vibeslocal.services.MediaPlayerService
 import com.example.vibeslocal.viewmodels.PlaybackControlViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class PlaybackControlFragment : Fragment() {
+class PlaybackControlFragment : Fragment(R.layout.fragment_playback_control) {
     private val viewModel: PlaybackControlViewModel by viewModel()
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_playback_control, container, false)
-    }
+    private lateinit var binding: FragmentPlaybackControlBinding
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding = FragmentPlaybackControlBinding.bind(view)
 
-        val playbackControl = view.findViewById<LinearLayout>(R.id.playbackControl)
-        playbackControl.visibility = View.GONE
+        binding.playbackControl.visibility = View.GONE
 
-        val currentSongItem = view.findViewById<FragmentContainerView>(R.id.currSongItem)
-        currentSongItem.setOnClickListener {
+        //region setting up basic onClick actions
+        binding.currSongItem.setOnClickListener {
             val intent = Intent(requireContext(), PlaybackDetailsActivity::class.java)
             startActivity(intent)
         }
 
-        //region setting up basic onClick actions
-        val pauseButton = view.findViewById<ImageButton>(R.id.pauseButton)
-
-        pauseButton.setOnClickListener {
+        binding.pauseButton.setOnClickListener {
             viewModel.pauseSong()
         }
         //endregion
@@ -52,13 +39,13 @@ class PlaybackControlFragment : Fragment() {
         //actions that depend on serviceConnection
         val togglePauseButtonIcon : (Boolean) -> Unit = { isPlaying ->
             val icon = if (isPlaying) android.R.drawable.ic_media_pause else android.R.drawable.ic_media_play
-            pauseButton.setImageResource(icon)
+            binding.pauseButton.setImageResource(icon)
         }
 
         val toggleShowPlaybackControl : (Boolean) -> Unit = { isQueuePlaying ->
             //if it's not right
-            if (isQueuePlaying != playbackControl.isVisible)
-                playbackControl.visibility = if (isQueuePlaying) View.VISIBLE else View.GONE
+            if (isQueuePlaying != binding.playbackControl.isVisible)
+                binding.playbackControl.visibility = if (isQueuePlaying) View.VISIBLE else View.GONE
         }
 
         //handle connection
