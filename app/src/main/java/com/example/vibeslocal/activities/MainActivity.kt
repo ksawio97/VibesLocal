@@ -4,14 +4,20 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import com.example.vibeslocal.R
+import com.example.vibeslocal.adapters.GroupingPagerAdapter
+import com.example.vibeslocal.databinding.ActivityMainBinding
 import com.example.vibeslocal.services.MediaPlayerService
+import com.example.vibeslocal.viewmodels.CurrentPageViewModel
 import com.example.vibeslocal.viewmodels.MainViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : AppCompatActivity() {
     private val viewModel : MainViewModel by viewModel()
+    private val currentPageViewModel : CurrentPageViewModel by viewModel()
 
+    private lateinit var binding : ActivityMainBinding
+
+    private lateinit var currentPageChanges: (Int) -> Unit
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         installSplashScreen().apply {
@@ -22,6 +28,28 @@ class MainActivity : AppCompatActivity() {
         val mediaPlayerService = Intent(this, MediaPlayerService::class.java)
         startService(mediaPlayerService)
 
-        setContentView(R.layout.activity_main)
+
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        //#region setting up changing currentItem in groupingPager based on tab
+        binding.groupingPager.currentItem = currentPageViewModel.getCurrentItem()
+        currentPageChanges = {
+            if (binding.groupingPager.currentItem != it)
+                binding.groupingPager.currentItem = it
+        }
+        currentPageViewModel.subscribe(currentPageChanges)
+        //#endregion
+
+        //adding action to inform changing page in groupingPager
+        binding.groupingPager.registerOnPageChangeCallback(currentPageViewModel.onPageChangeCallback)
+        //attaching adapter
+        binding.groupingPager.adapter = GroupingPagerAdapter(supportFragmentManager, lifecycle)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        currentPageViewModel.unsubscribe(currentPageChanges)
     }
 }

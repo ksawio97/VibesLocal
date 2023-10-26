@@ -7,14 +7,14 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.vibeslocal.R
 import com.example.vibeslocal.databinding.FragmentGroupingOptionBinding
-import com.example.vibeslocal.models.GroupingOptionModel
+import com.example.vibeslocal.models.OptionModel
 
-class GroupingOptionsListAdapter(private var groupingOptionsList: List<GroupingOptionModel>)
-    : RecyclerView.Adapter<GroupingOptionsListAdapter.GroupingOptionHolder>() {
+class OptionsListAdapter(private var groupingOptionsList: List<OptionModel>)
+    : RecyclerView.Adapter<OptionsListAdapter.GroupingOptionHolder>() {
 
     private lateinit var onClickListener : OnItemClickListener
     interface OnItemClickListener {
-        fun onItemClick(songModel: GroupingOptionModel)
+        fun onItemClick(songModel: OptionModel)
     }
 
     fun setOnItemClickListener(listener: OnItemClickListener) {
@@ -32,19 +32,19 @@ class GroupingOptionsListAdapter(private var groupingOptionsList: List<GroupingO
 
     override fun onBindViewHolder(holder: GroupingOptionHolder, position: Int) {
         val currentItem = groupingOptionsList[position]
-        holder.groupingOptionModel = currentItem
+        holder.optionModel = currentItem
         holder.groupingOptionTitle.text = currentItem.title
     }
 
     inner class GroupingOptionHolder(itemView: View, listener: OnItemClickListener) : RecyclerView.ViewHolder(itemView) {
         private val binding = FragmentGroupingOptionBinding.bind(itemView)
-        lateinit var groupingOptionModel : GroupingOptionModel
+        lateinit var optionModel : OptionModel
         val groupingOptionTitle : TextView = binding.optionTitle
 
         init {
             itemView.setOnClickListener {
-                if (::groupingOptionModel.isInitialized)
-                    listener.onItemClick(groupingOptionModel)
+                if (::optionModel.isInitialized)
+                    listener.onItemClick(optionModel)
             }
         }
     }

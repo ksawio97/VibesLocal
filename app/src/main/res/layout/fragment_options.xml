@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:paddingStart="10dp"
     android:paddingEnd="10dp"
-    tools:context=".fragments.GroupingOptionsFragment">
+    tools:context=".fragments.OptionsFragment">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/grouping_options"

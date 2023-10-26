@@ -5,4 +5,8 @@
     <string name="pauseButtonContentDescription">toggle pause</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="tab_item_0">Playlists</string>
+    <string name="tab_item_1">Albums</string>
+    <string name="tab_item_2">Artists</string>
+    <string name="tab_item_3">Genres</string>
 </resources>
