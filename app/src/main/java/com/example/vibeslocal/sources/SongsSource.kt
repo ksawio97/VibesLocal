@@ -1,9 +1,11 @@
 package com.example.vibeslocal.sources
 
-import android.content.ContentResolver
 import android.content.ContentUris
 import android.content.Context
+import android.os.Build
 import android.provider.MediaStore
+import android.util.Log
+import androidx.annotation.RequiresApi
 import com.example.vibeslocal.models.SongModel
 import com.example.vibeslocal.services.SongThumbnailService
 import kotlinx.coroutines.Deferred
@@ -15,6 +17,7 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
 class SongsSource(private val songThumbnailService: SongThumbnailService) : KoinComponent {
+    @RequiresApi(Build.VERSION_CODES.R)
     suspend fun loadSongsData() : List<SongModel>? = coroutineScope {
         val context: Context by inject()
 
@@ -22,7 +25,8 @@ class SongsSource(private val songThumbnailService: SongThumbnailService) : Koin
             MediaStore.Audio.Media._ID,
             MediaStore.Audio.Media.TITLE,
             MediaStore.Audio.Media.ARTIST,
-            MediaStore.Audio.Media.ALBUM_ID
+            MediaStore.Audio.Media.ALBUM_ID,
+            MediaStore.Audio.Media.GENRE
         )
 
         context.contentResolver.query(
@@ -36,6 +40,7 @@ class SongsSource(private val songThumbnailService: SongThumbnailService) : Koin
             val titleColumn = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.TITLE)
             val artistColumn = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ARTIST)
             val albumIdColumn = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM_ID)
+            val genreColumn = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.GENRE)
 
 
             val loadedAlbumsThumbnails = mutableSetOf<Long>()
@@ -48,6 +53,7 @@ class SongsSource(private val songThumbnailService: SongThumbnailService) : Koin
                     val title = cursor.getString(titleColumn)
                     val artist = cursor.getString(artistColumn)
                     val albumId = cursor.getLong(albumIdColumn)
+                    val genre = cursor.getString(genreColumn) ?: "<unknown>"
 
                     deferredThumbnails.add(async(Dispatchers.IO) {
                         if(loadedAlbumsThumbnails.contains(albumId))
@@ -55,8 +61,12 @@ class SongsSource(private val songThumbnailService: SongThumbnailService) : Koin
                         loadedAlbumsThumbnails.add(albumId)
                         songThumbnailService.putThumbnail(albumId, context.contentResolver)
                     })
-                    songModels.add(SongModel(id, title, artist, albumId, ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, id)))
-
+                    try{
+                        songModels.add(SongModel(id, title, artist, albumId, genre, ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, id)))
+                    }
+                    catch(ex: Exception) {
+                        Log.e("Error", ex.message.toString())
+                    }
                     cursor.moveToNext()
                 }
             }

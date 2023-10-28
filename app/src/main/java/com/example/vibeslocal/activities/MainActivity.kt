@@ -1,11 +1,14 @@
 package com.example.vibeslocal.activities
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.example.vibeslocal.adapters.GroupingPagerAdapter
 import com.example.vibeslocal.databinding.ActivityMainBinding
+import com.example.vibeslocal.models.SongModel
 import com.example.vibeslocal.services.MediaPlayerService
 import com.example.vibeslocal.viewmodels.CurrentPageViewModel
 import com.example.vibeslocal.viewmodels.MainViewModel
@@ -18,6 +21,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding : ActivityMainBinding
 
     private lateinit var currentPageChanges: (Int) -> Unit
+    @RequiresApi(Build.VERSION_CODES.R)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         installSplashScreen().apply {
@@ -43,8 +47,10 @@ class MainActivity : AppCompatActivity() {
 
         //adding action to inform changing page in groupingPager
         binding.groupingPager.registerOnPageChangeCallback(currentPageViewModel.onPageChangeCallback)
+
+        val selectors = listOf(SongModel::artist, SongModel::albumId, SongModel::artist, SongModel::genre)
         //attaching adapter
-        binding.groupingPager.adapter = GroupingPagerAdapter(supportFragmentManager, lifecycle)
+        binding.groupingPager.adapter = GroupingPagerAdapter(supportFragmentManager, lifecycle, selectors)
     }
 
     override fun onDestroy() {

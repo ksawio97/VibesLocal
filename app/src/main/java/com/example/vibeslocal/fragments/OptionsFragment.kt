@@ -5,10 +5,11 @@ import android.view.View
 import androidx.fragment.app.Fragment
 import com.example.vibeslocal.R
 import com.example.vibeslocal.databinding.FragmentOptionsBinding
+import com.example.vibeslocal.models.SongModel
 import com.example.vibeslocal.viewmodels.OptionsViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class OptionsFragment : Fragment(R.layout.fragment_options) {
+class OptionsFragment<T>(private val selector: (SongModel) -> T) : Fragment(R.layout.fragment_options) {
     private val viewModel: OptionsViewModel by viewModel()
     private lateinit var binding: FragmentOptionsBinding
 
@@ -16,6 +17,6 @@ class OptionsFragment : Fragment(R.layout.fragment_options) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentOptionsBinding.bind(view)
 
-        viewModel.configureRecyclerView(binding.groupingOptions)
+        viewModel.configureRecyclerView(binding.groupingOptions, selector)
     }
 }
