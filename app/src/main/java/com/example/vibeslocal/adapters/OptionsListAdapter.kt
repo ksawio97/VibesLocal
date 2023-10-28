@@ -8,9 +8,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.vibeslocal.R
 import com.example.vibeslocal.databinding.FragmentGroupingOptionBinding
 import com.example.vibeslocal.models.OptionModel
-
-class OptionsListAdapter(private var optionsList: List<OptionModel>)
+//TODO add some animations
+class OptionsListAdapter
     : RecyclerView.Adapter<OptionsListAdapter.OptionHolder>() {
+    private val optionsList = mutableListOf<OptionModel>()
 
     private lateinit var onClickListener : OnItemClickListener
     interface OnItemClickListener {
@@ -47,5 +48,11 @@ class OptionsListAdapter(private var optionsList: List<OptionModel>)
                     listener.onItemClick(optionModel)
             }
         }
+    }
+
+    fun addItems(items: Collection<OptionModel>) {
+        val lastPosition = optionsList.size
+        optionsList.addAll(lastPosition, items)
+        notifyItemRangeInserted(lastPosition, items.size)
     }
 }

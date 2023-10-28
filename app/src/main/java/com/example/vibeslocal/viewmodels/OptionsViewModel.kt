@@ -10,19 +10,16 @@ import com.example.vibeslocal.repositories.SongsRepository
 import org.koin.core.component.KoinComponent
 
 class OptionsViewModel(private val songsRepository: SongsRepository) : ViewModel(), KoinComponent {
-    fun <T> configureRecyclerView(
-        recyclerView: RecyclerView,
-        selector: (SongModel) -> T
+    private lateinit var options : Map<*, List<SongModel>>
+    private val optionsListAdapter = OptionsListAdapter()
+    fun <T> loadGroupedSongs(selector: (SongModel) -> T) {
+        options = songsRepository.getGroupedSongs(selector)
+    }
+    fun configureRecyclerView(
+        recyclerView: RecyclerView
     ) {
         recyclerView.setHasFixedSize(true)
-        //it will be needed to pass it to shown activity
-        val options = songsRepository.getGroupedSongs(selector)
-        //TODO add slow loading to it
-        val optionsList = options.keys.map{
-            OptionModel(it.toString())
-        }
 
-        val optionsListAdapter = OptionsListAdapter(optionsList)
         recyclerView.adapter = optionsListAdapter
 
         optionsListAdapter.setOnItemClickListener(object: OptionsListAdapter.OnItemClickListener {
@@ -31,5 +28,13 @@ class OptionsViewModel(private val songsRepository: SongsRepository) : ViewModel
                 Log.i("Debug", "Clicked ${optionModel.title}")
             }
         })
+    }
+
+    fun addOptions() {
+        val optionsList = options.keys.map{
+            OptionModel(it.toString())
+        }
+
+        optionsListAdapter.addItems(optionsList)
     }
 }
