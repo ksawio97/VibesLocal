@@ -1,3 +1,5 @@
 package com.example.vibeslocal.models
 
-data class OptionModel(val title: String)
+import android.graphics.Bitmap
+
+data class OptionModel(val title: String, val thumbnail: Bitmap, val songsCount: Int)

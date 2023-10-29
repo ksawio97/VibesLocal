@@ -44,7 +44,14 @@ class MusicItemsListAdapter(private var songsList: MutableList<SongModel>, priva
         fun setSongs(newSongs: Collection<SongModel>){
             songsList.clear()
             songsList.addAll(newSongs)
-            //TODO better notifications on changes
+            //TODO check if it works
+            /*
+                val oldLength = songsList.size
+                songsList.clear()
+                songsList.addAll(newSongs)
+                notifyItemRangeChanged(0, oldLength)
+                notifyItemRangeInserted(oldLength, songsList.size - oldLength)
+             */
             notifyDataSetChanged()
         }
 

@@ -3,16 +3,18 @@ package com.example.vibeslocal.adapters
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.vibeslocal.R
 import com.example.vibeslocal.databinding.FragmentGroupingOptionBinding
 import com.example.vibeslocal.models.OptionModel
+
 //TODO add some animations
 class OptionsListAdapter
     : RecyclerView.Adapter<OptionsListAdapter.OptionHolder>() {
     private val optionsList = mutableListOf<OptionModel>()
-
+    //private val getThumbnail = optionsList.getThumbnailFactory()
     private lateinit var onClickListener : OnItemClickListener
     interface OnItemClickListener {
         fun onItemClick(optionModel: OptionModel)
@@ -35,11 +37,13 @@ class OptionsListAdapter
         val currentItem = optionsList[position]
         holder.optionModel = currentItem
         holder.optionTitle.text = currentItem.title
+        holder.optionImage.setImageBitmap(currentItem.thumbnail)
     }
 
     inner class OptionHolder(itemView: View, listener: OnItemClickListener) : RecyclerView.ViewHolder(itemView) {
         private val binding = FragmentGroupingOptionBinding.bind(itemView)
         lateinit var optionModel : OptionModel
+        val optionImage: ImageView = binding.optionImage
         val optionTitle : TextView = binding.optionTitle
 
         init {
