@@ -26,6 +26,7 @@ class SongsSource(private val songThumbnailService: SongThumbnailService) : Koin
             MediaStore.Audio.Media.TITLE,
             MediaStore.Audio.Media.ARTIST,
             MediaStore.Audio.Media.ALBUM_ID,
+            MediaStore.Audio.Media.ALBUM,
             MediaStore.Audio.Media.GENRE
         )
 
@@ -40,6 +41,7 @@ class SongsSource(private val songThumbnailService: SongThumbnailService) : Koin
             val titleColumn = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.TITLE)
             val artistColumn = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ARTIST)
             val albumIdColumn = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM_ID)
+            val albumTitleColumn = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM)
             val genreColumn = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.GENRE)
 
 
@@ -53,6 +55,7 @@ class SongsSource(private val songThumbnailService: SongThumbnailService) : Koin
                     val title = cursor.getString(titleColumn)
                     val artist = cursor.getString(artistColumn)
                     val albumId = cursor.getLong(albumIdColumn)
+                    val albumTitle = cursor.getString(albumTitleColumn)
                     val genre = cursor.getString(genreColumn) ?: "<unknown>"
 
                     deferredThumbnails.add(async(Dispatchers.IO) {
@@ -62,7 +65,7 @@ class SongsSource(private val songThumbnailService: SongThumbnailService) : Koin
                         songThumbnailService.putThumbnail(albumId, context.contentResolver)
                     })
                     try{
-                        songModels.add(SongModel(id, title, artist, albumId, genre, ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, id)))
+                        songModels.add(SongModel(id, title, artist, albumId, albumTitle, genre, ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, id)))
                     }
                     catch(ex: Exception) {
                         Log.e("Error", ex.message.toString())

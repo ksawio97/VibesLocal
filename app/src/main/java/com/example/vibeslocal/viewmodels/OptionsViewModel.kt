@@ -6,14 +6,18 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.vibeslocal.adapters.OptionsListAdapter
 import com.example.vibeslocal.models.OptionModel
 import com.example.vibeslocal.models.SongModel
+import com.example.vibeslocal.models.getParameterDisplayValue
 import com.example.vibeslocal.repositories.SongsRepository
 import org.koin.core.component.KoinComponent
 
 class OptionsViewModel(private val songsRepository: SongsRepository) : ViewModel(), KoinComponent {
     private lateinit var options : Map<*, List<SongModel>>
+    private lateinit var selector : (SongModel) -> Any?
     private val optionsListAdapter = OptionsListAdapter()
+
     fun <T> loadGroupedSongs(selector: (SongModel) -> T) {
         options = songsRepository.getGroupedSongs(selector)
+        this.selector = selector
     }
     fun configureRecyclerView(
         recyclerView: RecyclerView
@@ -32,7 +36,7 @@ class OptionsViewModel(private val songsRepository: SongsRepository) : ViewModel
 
     fun addOptions() {
         val optionsList = options.keys.map{
-            OptionModel(it.toString())
+            OptionModel(options[it]?.first()?.getParameterDisplayValue(selector) ?: it.toString())
         }
 
         optionsListAdapter.addItems(optionsList)
