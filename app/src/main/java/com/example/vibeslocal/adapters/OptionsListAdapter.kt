@@ -36,15 +36,19 @@ class OptionsListAdapter
     override fun onBindViewHolder(holder: OptionHolder, position: Int) {
         val currentItem = optionsList[position]
         holder.optionModel = currentItem
-        holder.optionTitle.text = currentItem.title
+
         holder.optionImage.setImageBitmap(currentItem.thumbnail)
+        holder.optionTitle.text = currentItem.title
+        val description = "${currentItem.songsCount} ${if (currentItem.songsCount == 1) "song" else "songs"}"
+        holder.optionDescription.text = description
     }
 
     inner class OptionHolder(itemView: View, listener: OnItemClickListener) : RecyclerView.ViewHolder(itemView) {
         private val binding = FragmentGroupingOptionBinding.bind(itemView)
         lateinit var optionModel : OptionModel
         val optionImage: ImageView = binding.optionImage
-        val optionTitle : TextView = binding.optionTitle
+        val optionTitle: TextView = binding.optionTitle
+        val optionDescription: TextView = binding.optionDescription
 
         init {
             itemView.setOnClickListener {
