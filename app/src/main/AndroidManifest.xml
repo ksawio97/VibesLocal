@@ -5,29 +5,35 @@
     <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
 
     <application
-        android:screenOrientation="portrait"
         android:name=".MainApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@drawable/baseline_library_music_24"
         android:label="@string/app_name"
+        android:screenOrientation="portrait"
         android:supportsRtl="true"
         android:theme="@style/Theme.App.Starting"
         tools:targetApi="31">
         <activity
+            android:name=".activities.GroupedSongsActivity"
+            android:parentActivityName=".activities.MainActivity"
             android:screenOrientation="locked"
+            android:theme="@style/Theme.VibesLocal"
+            android:exported="false" />
+        <activity
             android:name=".activities.PlaybackDetailsActivity"
             android:exported="false"
-            android:theme="@style/Theme.VibesLocal"
-            android:parentActivityName=".activities.MainActivity"/>
-        <activity
+            android:parentActivityName=".activities.MainActivity"
             android:screenOrientation="locked"
+            android:theme="@style/Theme.VibesLocal" />
+        <activity
             android:name=".activities.MainActivity"
+            android:alwaysRetainTaskState="true"
             android:exported="true"
-            android:theme="@style/Theme.App.Starting"
             android:launchMode="singleTask"
-            android:alwaysRetainTaskState="true">
+            android:screenOrientation="locked"
+            android:theme="@style/Theme.App.Starting">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

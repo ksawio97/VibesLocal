@@ -1,6 +1,5 @@
 package com.example.vibeslocal.viewmodels
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.recyclerview.widget.RecyclerView
 import com.example.vibeslocal.adapters.OptionsListAdapter
@@ -21,7 +20,8 @@ class OptionsViewModel(private val songsRepository: SongsRepository) : ViewModel
         this.selector = selector
     }
     fun configureRecyclerView(
-        recyclerView: RecyclerView
+        recyclerView: RecyclerView,
+        onItemClickUIAction: () -> Unit
     ) {
         recyclerView.setHasFixedSize(true)
 
@@ -29,8 +29,7 @@ class OptionsViewModel(private val songsRepository: SongsRepository) : ViewModel
 
         optionsListAdapter.setOnItemClickListener(object: OptionsListAdapter.OnItemClickListener {
             override fun onItemClick(optionModel: OptionModel) {
-                //TODO add here redirection to activity with songs
-                Log.i("Debug", "Clicked ${optionModel.title}")
+                onItemClickUIAction()
             }
         })
     }
