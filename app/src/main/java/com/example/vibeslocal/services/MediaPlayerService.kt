@@ -7,17 +7,19 @@ import android.os.Binder
 import android.os.IBinder
 import android.util.Log
 import com.example.vibeslocal.generic.CustomEvent
-import com.example.vibeslocal.generic.CustomEventManager
-import com.example.vibeslocal.generic.ICustomEventManagerClass
+import com.example.vibeslocal.managers.CustomEventManager
+import com.example.vibeslocal.managers.ICustomEventManager
+import com.example.vibeslocal.managers.SongsQueueManager
 import com.example.vibeslocal.models.SongModel
 import com.example.vibeslocal.repositories.SongsRepository
 import org.koin.android.ext.android.inject
+import org.koin.core.component.KoinComponent
 
-class MediaPlayerService : Service(), ICustomEventManagerClass<MediaPlayerService.Events> {
+class MediaPlayerService : Service(), ICustomEventManager<MediaPlayerService.Events>, KoinComponent {
     private val binder = MediaPlayerBinder()
     private var mediaPlayer: MediaPlayer = MediaPlayer()
 
-    private val songsQueueService : SongsQueueService by inject()
+    private val songsQueueManager : SongsQueueManager by inject()
     private val songsRepository: SongsRepository by inject()
 
     private val isQueuePlaying = EventWithBooleanValue()
@@ -72,19 +74,19 @@ class MediaPlayerService : Service(), ICustomEventManagerClass<MediaPlayerServic
     }
 
     fun getCurrentSong() : SongModel? {
-        val currSongId = songsQueueService.getCurrentSong()
+        val currSongId = songsQueueManager.getCurrentSong()
         return songsRepository.getSongById(currSongId)
     }
 
     fun playPreviousSong() {
-        if(songsQueueService.goToPreviousSong()) {
+        if(songsQueueManager.goToPreviousSong()) {
             playCurrentSong()
             customEventManager.notifyEvent(Events.CurrentSongChangedEvent, getCurrentSong())
         }
     }
 
     fun playNextSong() {
-        if(songsQueueService.goToNextSong()) {
+        if(songsQueueManager.goToNextSong()) {
             playCurrentSong()
             customEventManager.notifyEvent(Events.CurrentSongChangedEvent, getCurrentSong())
         }

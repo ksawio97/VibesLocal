@@ -1,15 +1,8 @@
-package com.example.vibeslocal.services
+package com.example.vibeslocal.managers
 
-import android.app.Service
-import android.content.Intent
-import android.os.IBinder
-
-class SongsQueueService : Service() {
+class SongsQueueManager {
     private val songsQueue = mutableListOf<Long>()
     private var currentSong: Int = -1
-    override fun onBind(p0: Intent?): IBinder? {
-        return null
-    }
 
     fun setQueue(songs: Collection<Long>) {
         songsQueue.clear()

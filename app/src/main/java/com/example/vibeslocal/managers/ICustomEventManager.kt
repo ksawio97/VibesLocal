@@ -1,6 +1,6 @@
-package com.example.vibeslocal.generic
+package com.example.vibeslocal.managers
 
-interface ICustomEventManagerClass<EventType> {
+interface ICustomEventManager<EventType> {
     fun <T> subscribeToEvent(event: EventType, action: (T) -> Unit)
     fun <T> unsubscribeToEvent(event: EventType, action: (T) -> Unit)
 }

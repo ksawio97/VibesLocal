@@ -5,14 +5,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.RecyclerView
 import com.example.vibeslocal.adapters.MusicItemsListAdapter
+import com.example.vibeslocal.managers.SongsQueueManager
 import com.example.vibeslocal.models.SongModel
 import com.example.vibeslocal.repositories.SongsRepository
 import com.example.vibeslocal.services.MediaPlayerService
-import com.example.vibeslocal.services.SongsQueueService
 import kotlinx.coroutines.launch
-import org.koin.core.component.KoinComponent
 
-class MusicItemsViewModel(private val songsRepository: SongsRepository, private val songsQueueService: SongsQueueService) : ViewModel(), KoinComponent {
+class MusicItemsViewModel(private val songsRepository: SongsRepository, private val songsQueueManager: SongsQueueManager) : ViewModel() {
     private val musicItemsListAdapter: MusicItemsListAdapter = MusicItemsListAdapter(mutableListOf())
 
     @SuppressLint("StaticFieldLeak")
@@ -36,7 +35,7 @@ class MusicItemsViewModel(private val songsRepository: SongsRepository, private 
                         null
                     }
 
-                    songsQueueService.setQueue(songs)
+                    songsQueueManager.setQueue(songs)
                 }
 
                 mediaPlayerService?.startPlayback()

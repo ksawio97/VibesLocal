@@ -1,12 +1,12 @@
 package com.example.vibeslocal
 
-import com.example.vibeslocal.services.SongsQueueService
+import com.example.vibeslocal.managers.SongsQueueManager
 import org.junit.Test
 
-class SongsQueueServiceUnitTest {
+class SongsQueueManagerUnitTest {
     @Test
     fun testGettingSongFromEmptyQueue() {
-        val service = SongsQueueService()
+        val service = SongsQueueManager()
         assert(service.getCurrentSong() == (-1).toLong())
 
         service.clearQueue()
@@ -18,7 +18,7 @@ class SongsQueueServiceUnitTest {
 
     @Test
     fun testSongQueuePlayback() {
-        val service = SongsQueueService()
+        val service = SongsQueueManager()
         val songs = listOf<Long>(321, 3123232, 3234, 32478)
         service.setQueue(songs)
 

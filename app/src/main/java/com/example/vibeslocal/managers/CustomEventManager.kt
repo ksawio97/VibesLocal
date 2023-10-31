@@ -1,4 +1,6 @@
-package com.example.vibeslocal.generic
+package com.example.vibeslocal.managers
+
+import com.example.vibeslocal.generic.CustomEvent
 
 class CustomEventManager<EventType : Enum<EventType>>(private val events: Map<EventType, CustomEvent<*>>) {
 

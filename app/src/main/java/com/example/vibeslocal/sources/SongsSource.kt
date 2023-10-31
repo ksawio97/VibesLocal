@@ -6,8 +6,8 @@ import android.os.Build
 import android.provider.MediaStore
 import android.util.Log
 import androidx.annotation.RequiresApi
+import com.example.vibeslocal.managers.SongThumbnailManager
 import com.example.vibeslocal.models.SongModel
-import com.example.vibeslocal.services.SongThumbnailService
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -16,7 +16,7 @@ import kotlinx.coroutines.coroutineScope
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
-class SongsSource(private val songThumbnailService: SongThumbnailService) : KoinComponent {
+class SongsSource(private val songThumbnailManager: SongThumbnailManager) : KoinComponent {
     @RequiresApi(Build.VERSION_CODES.R)
     suspend fun loadSongsData() : List<SongModel>? = coroutineScope {
         val context: Context by inject()
@@ -62,7 +62,7 @@ class SongsSource(private val songThumbnailService: SongThumbnailService) : Koin
                         if(loadedAlbumsThumbnails.contains(albumId))
                             return@async
                         loadedAlbumsThumbnails.add(albumId)
-                        songThumbnailService.putThumbnail(albumId, context.contentResolver)
+                        songThumbnailManager.putThumbnail(albumId, context.contentResolver)
                     })
                     try{
                         songModels.add(SongModel(id, title, artist, albumId, albumTitle, genre, ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, id)))

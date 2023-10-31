@@ -5,9 +5,9 @@ import android.widget.ImageView
 import androidx.lifecycle.ViewModel
 import com.example.vibeslocal.models.SongModel
 import com.example.vibeslocal.services.MediaPlayerService
-import com.example.vibeslocal.services.SongThumbnailService
+import com.example.vibeslocal.managers.SongThumbnailManager
 
-class CurrentSongItemViewModel(private val songThumbnailService: SongThumbnailService): ViewModel() {
+class CurrentSongItemViewModel(private val songThumbnailManager: SongThumbnailManager): ViewModel() {
     @SuppressLint("StaticFieldLeak")
     var mediaPlayerService: MediaPlayerService? = null
 
@@ -20,6 +20,6 @@ class CurrentSongItemViewModel(private val songThumbnailService: SongThumbnailSe
     }
 
     fun loadSongItem(albumId: Long, songThumbnail: ImageView) {
-        songThumbnail.setImageBitmap(songThumbnailService.getThumbnail(albumId))
+        songThumbnail.setImageBitmap(songThumbnailManager.getThumbnail(albumId))
     }
 }
