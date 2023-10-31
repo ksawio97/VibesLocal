@@ -7,7 +7,6 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.example.vibeslocal.fragments.OptionsFragment
 import com.example.vibeslocal.models.SongModel
 
-//TODO get items from GroupingModel
 class GroupingPagerAdapter<T>(
     fragmentManager: FragmentManager,
     lifecycle: Lifecycle,
@@ -15,7 +14,7 @@ class GroupingPagerAdapter<T>(
     override fun getItemCount(): Int {
         return groupingSelectors.size
     }
-    //TODO change grouping based on position
+
     override fun createFragment(position: Int): Fragment {
         return OptionsFragment(groupingSelectors[position])
     }

@@ -1,6 +1,5 @@
 package com.example.vibeslocal.adapters
 
-import android.graphics.Bitmap
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,10 +9,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.vibeslocal.R
 import com.example.vibeslocal.databinding.SongItemBinding
 import com.example.vibeslocal.models.SongModel
+import com.example.vibeslocal.models.getThumbnailFactory
 
-class MusicItemsListAdapter(private var songsList: MutableList<SongModel>, private val getThumbnail: (Long) -> Bitmap) :
+class MusicItemsListAdapter(private var songsList: MutableList<SongModel>) :
     RecyclerView.Adapter<MusicItemsListAdapter.SongHolder>() {
-
+        private val getThumbnail = getThumbnailFactory()
         private lateinit var onClickListener : OnItemClickListener
         interface OnItemClickListener {
             fun onItemClick(songModel: SongModel?)
@@ -33,7 +33,7 @@ class MusicItemsListAdapter(private var songsList: MutableList<SongModel>, priva
             holder.songModel = currentItem
             holder.songTitle.text = currentItem.title
             holder.songAuthor.text = currentItem.artist
-            val thumbnail = getThumbnail(currentItem.albumId)
+            val thumbnail = currentItem.getThumbnail()
             holder.songThumbnail.setImageBitmap(thumbnail)
         }
 
@@ -42,17 +42,11 @@ class MusicItemsListAdapter(private var songsList: MutableList<SongModel>, priva
         }
 
         fun setSongs(newSongs: Collection<SongModel>){
+            val oldLength = songsList.size
             songsList.clear()
             songsList.addAll(newSongs)
-            //TODO check if it works
-            /*
-                val oldLength = songsList.size
-                songsList.clear()
-                songsList.addAll(newSongs)
-                notifyItemRangeChanged(0, oldLength)
-                notifyItemRangeInserted(oldLength, songsList.size - oldLength)
-             */
-            notifyDataSetChanged()
+            notifyItemRangeChanged(0, oldLength)
+            notifyItemRangeInserted(oldLength, songsList.size - oldLength)
         }
 
         inner class SongHolder(itemView: View, listener: OnItemClickListener) : RecyclerView.ViewHolder(itemView) {
