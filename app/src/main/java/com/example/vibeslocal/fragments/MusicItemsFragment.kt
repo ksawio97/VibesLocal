@@ -12,10 +12,10 @@ import com.example.vibeslocal.R
 import com.example.vibeslocal.databinding.FragmentMusicItemsBinding
 import com.example.vibeslocal.services.MediaPlayerService
 import com.example.vibeslocal.viewmodels.MusicItemsViewModel
-import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.androidx.viewmodel.ext.android.activityViewModel
 
 class MusicItemsFragment : Fragment(R.layout.fragment_music_items) {
-    private val viewModel : MusicItemsViewModel by viewModel()
+    private val viewModel : MusicItemsViewModel by activityViewModel()
     private lateinit var binding: FragmentMusicItemsBinding
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -23,7 +23,6 @@ class MusicItemsFragment : Fragment(R.layout.fragment_music_items) {
         binding = FragmentMusicItemsBinding.bind(view)
 
         viewModel.configureRecyclerView(binding.musicItemsList)
-        viewModel.loadDataToAdapter()
 
         //connect to MediaPlayerService
         val intent = Intent(requireContext(), MediaPlayerService::class.java)

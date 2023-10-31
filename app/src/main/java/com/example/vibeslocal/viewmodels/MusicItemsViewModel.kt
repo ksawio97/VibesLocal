@@ -14,14 +14,13 @@ import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 
 class MusicItemsViewModel(private val songsRepository: SongsRepository, private val songsQueueService: SongsQueueService, private val songThumbnailService: SongThumbnailService) : ViewModel(), KoinComponent {
-    private lateinit var musicItemsListAdapter: MusicItemsListAdapter
+    private val musicItemsListAdapter: MusicItemsListAdapter = MusicItemsListAdapter(mutableListOf(), songThumbnailService::getThumbnail)
 
     @SuppressLint("StaticFieldLeak")
     var mediaPlayerService: MediaPlayerService? = null
 
     fun configureRecyclerView(recyclerView: RecyclerView) {
         recyclerView.setHasFixedSize(true)
-        musicItemsListAdapter = MusicItemsListAdapter(songsRepository.getAll().toMutableList(), songThumbnailService::getThumbnail)
         recyclerView.adapter = musicItemsListAdapter
 
         musicItemsListAdapter.setOnItemClickListener(object: MusicItemsListAdapter.OnItemClickListener {
@@ -47,8 +46,8 @@ class MusicItemsViewModel(private val songsRepository: SongsRepository, private 
 
     }
 
-    fun loadDataToAdapter() {
-        musicItemsListAdapter.setSongs(songsRepository.getAll())
+    fun loadDataToAdapter(songs: Collection<SongModel>) {
+        musicItemsListAdapter.setSongs(songs)
         songsRepository.onSongsChanged {
             viewModelScope.launch {
                 musicItemsListAdapter.setSongs(it)

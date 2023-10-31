@@ -20,8 +20,12 @@ class OptionsFragment<T>(private val selector: (SongModel) -> T) : Fragment(R.la
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentOptionsBinding.bind(view)
-        viewModel.configureRecyclerView(binding.groupingOptions) {
-            val intent = Intent(context, GroupedSongsActivity::class.java)
+        viewModel.configureRecyclerView(binding.groupingOptions) { songsToSend ->
+            val intent = Intent(context, GroupedSongsActivity::class.java).apply {
+                val bundle = Bundle()
+                bundle.putParcelableArray(GroupedSongsActivity.retrievedSongs, songsToSend)
+                putExtras(bundle)
+            }
             startActivity(intent)
         }
 
