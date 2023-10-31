@@ -1,9 +1,12 @@
 package com.example.vibeslocal.viewmodels
 
+import android.annotation.SuppressLint
 import androidx.lifecycle.ViewModel
 import com.example.vibeslocal.services.MediaPlayerService
 
-class PlaybackControlViewModel() : ViewModel() {
+class PlaybackControlViewModel : ViewModel() {
+    //TODO handle service connection here
+    @SuppressLint("StaticFieldLeak")
     var mediaPlayerService: MediaPlayerService? = null
 
     fun pauseSong() {

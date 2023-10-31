@@ -10,7 +10,6 @@ import com.example.vibeslocal.viewmodels.CurrentPageViewModel
 import com.example.vibeslocal.viewmodels.CurrentSongItemViewModel
 import com.example.vibeslocal.viewmodels.MainViewModel
 import com.example.vibeslocal.viewmodels.MusicItemsViewModel
-import com.example.vibeslocal.viewmodels.NavigationTabViewModel
 import com.example.vibeslocal.viewmodels.OptionsViewModel
 import com.example.vibeslocal.viewmodels.PlaybackControlViewModel
 import com.example.vibeslocal.viewmodels.PlaybackSongActionsViewModel
@@ -21,7 +20,6 @@ import org.koin.dsl.module
 @RequiresApi(Build.VERSION_CODES.R)
 val viewModelModule = module {
     viewModelOf(::CurrentPageViewModel)
-    viewModelOf(::NavigationTabViewModel)
     viewModelOf(::OptionsViewModel)
     viewModelOf(::PlaybackSongActionsViewModel)
     viewModelOf(::CurrentSongItemViewModel)

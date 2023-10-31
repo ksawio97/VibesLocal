@@ -8,6 +8,7 @@ import com.example.vibeslocal.services.MediaPlayerService
 import com.example.vibeslocal.managers.SongThumbnailManager
 
 class CurrentSongItemViewModel(private val songThumbnailManager: SongThumbnailManager): ViewModel() {
+    //TODO handle service connection here
     @SuppressLint("StaticFieldLeak")
     var mediaPlayerService: MediaPlayerService? = null
 

@@ -6,12 +6,9 @@ import androidx.fragment.app.Fragment
 import com.example.vibeslocal.R
 import com.example.vibeslocal.databinding.FragmentNavigationTabBinding
 import com.example.vibeslocal.viewmodels.CurrentPageViewModel
-import com.example.vibeslocal.viewmodels.NavigationTabViewModel
 import org.koin.androidx.viewmodel.ext.android.activityViewModel
-import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class NavigationTabFragment : Fragment(R.layout.fragment_navigation_tab) {
-    private val viewModel: NavigationTabViewModel by viewModel()
     private val currentPageViewModel: CurrentPageViewModel by activityViewModel()
     private lateinit var binding: FragmentNavigationTabBinding
 

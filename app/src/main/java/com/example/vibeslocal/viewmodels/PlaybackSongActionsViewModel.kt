@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import com.example.vibeslocal.services.MediaPlayerService
 
 class PlaybackSongActionsViewModel : ViewModel() {
+    //TODO handle service connection here
     @SuppressLint("StaticFieldLeak")
     var mediaPlayerService : MediaPlayerService? = null
 

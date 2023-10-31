@@ -13,7 +13,7 @@ import kotlinx.coroutines.launch
 
 class MusicItemsViewModel(private val songsRepository: SongsRepository, private val songsQueueManager: SongsQueueManager) : ViewModel() {
     private val musicItemsListAdapter: MusicItemsListAdapter = MusicItemsListAdapter(mutableListOf())
-
+    //TODO handle service connection here
     @SuppressLint("StaticFieldLeak")
     var mediaPlayerService: MediaPlayerService? = null
 
