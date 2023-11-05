@@ -16,6 +16,7 @@ import com.example.vibeslocal.models.SongModel
 import com.example.vibeslocal.services.MediaPlayerService
 import com.example.vibeslocal.viewmodels.CurrentSongItemViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import java.lang.ref.WeakReference
 
 class CurrentSongItemFragment : Fragment(R.layout.song_item) {
     private val viewModel : CurrentSongItemViewModel by viewModel()
@@ -44,15 +45,14 @@ class CurrentSongItemFragment : Fragment(R.layout.song_item) {
                 val binder = service as MediaPlayerService.MediaPlayerBinder
 
                 val mediaPlayerService = binder.getService()
-                viewModel.mediaPlayerService = mediaPlayerService
+                viewModel.mediaPlayerService = WeakReference(mediaPlayerService)
                 onCurrentSongChangedEvent(mediaPlayerService.getCurrentSong())
 
                 viewModel.subscribeToMediaPlayerEvent(MediaPlayerService.Events.CurrentSongChangedEvent, onCurrentSongChangedEvent)
             }
 
             override fun onServiceDisconnected(name: ComponentName?) {
-                viewModel.mediaPlayerService = null
-
+                viewModel.mediaPlayerService.clear()
                 viewModel.unsubscribeToMediaPlayerEvent(MediaPlayerService.Events.CurrentSongChangedEvent, onCurrentSongChangedEvent)
             }
         }

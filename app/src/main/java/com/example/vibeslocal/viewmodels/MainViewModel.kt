@@ -16,13 +16,21 @@ class MainViewModel(private val songsRepository: SongsRepository) : ViewModel() 
     private val _isLoading = MutableStateFlow(true)
     val isLoading = _isLoading.asStateFlow()
 
-    init{
+    fun loadSongsToSongsRepository() {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 songsRepository.loadData()
             }
         }.invokeOnCompletion {
-            _isLoading.value = false
+            stopLoading()
         }
+    }
+
+    fun restartLoading() {
+        _isLoading.value = true
+        loadSongsToSongsRepository()
+    }
+    fun stopLoading() {
+        _isLoading.value = false
     }
 }
