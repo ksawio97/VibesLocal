@@ -13,6 +13,7 @@ import com.example.vibeslocal.databinding.FragmentPlaybackSongDetailsBinding
 import com.example.vibeslocal.services.MediaPlayerService
 import com.example.vibeslocal.viewmodels.PlaybackSongActionsViewModel
 import org.koin.android.ext.android.inject
+import java.lang.ref.WeakReference
 
 class PlaybackSongActionsFragment : Fragment(R.layout.fragment_playback_song_details) {
     private val viewModel: PlaybackSongActionsViewModel by inject()
@@ -46,14 +47,14 @@ class PlaybackSongActionsFragment : Fragment(R.layout.fragment_playback_song_det
                 val binder = service as MediaPlayerService.MediaPlayerBinder
 
                 val mediaPlayerService = binder.getService()
-                viewModel.mediaPlayerService = mediaPlayerService
+                viewModel.mediaPlayerService = WeakReference(mediaPlayerService)
 
                 togglePauseButtonIcon(mediaPlayerService.isPlaying())
                 viewModel.subscribeToMediaPlayerEvent(MediaPlayerService.Events.PauseChangedEvent, togglePauseButtonIcon)
             }
 
             override fun onServiceDisconnected(name: ComponentName?) {
-                viewModel.mediaPlayerService = null
+                viewModel.mediaPlayerService.clear()
 
                 viewModel.unsubscribeToMediaPlayerEvent(MediaPlayerService.Events.PauseChangedEvent, togglePauseButtonIcon)
             }

@@ -1,31 +1,30 @@
 package com.example.vibeslocal.viewmodels
 
-import android.annotation.SuppressLint
 import androidx.lifecycle.ViewModel
 import com.example.vibeslocal.services.MediaPlayerService
+import java.lang.ref.WeakReference
 
 class PlaybackSongActionsViewModel : ViewModel() {
     //TODO handle service connection here
-    @SuppressLint("StaticFieldLeak")
-    var mediaPlayerService : MediaPlayerService? = null
+    var mediaPlayerService: WeakReference<MediaPlayerService> = WeakReference(null)
 
     fun playPrevious() {
-        mediaPlayerService?.playPreviousSong()
+        mediaPlayerService.get()?.playPreviousSong()
     }
 
     fun pause() {
-        mediaPlayerService?.pausePlayback()
+        mediaPlayerService.get()?.pausePlayback()
     }
 
     fun playNext() {
-        mediaPlayerService?.playNextSong()
+        mediaPlayerService.get()?.playNextSong()
     }
 
     fun subscribeToMediaPlayerEvent(event: MediaPlayerService.Events, action: (Boolean) -> Unit) {
-        mediaPlayerService?.subscribeToEvent(event, action)
+        mediaPlayerService.get()?.subscribeToEvent(event, action)
     }
 
     fun unsubscribeToMediaPlayerEvent(event: MediaPlayerService.Events, action: (Boolean) -> Unit) {
-        mediaPlayerService?.unsubscribeToEvent(event, action)
+        mediaPlayerService.get()?.unsubscribeToEvent(event, action)
     }
 }

@@ -13,6 +13,7 @@ import com.example.vibeslocal.databinding.FragmentMusicItemsBinding
 import com.example.vibeslocal.services.MediaPlayerService
 import com.example.vibeslocal.viewmodels.MusicItemsViewModel
 import org.koin.androidx.viewmodel.ext.android.activityViewModel
+import java.lang.ref.WeakReference
 
 class MusicItemsFragment : Fragment(R.layout.fragment_music_items) {
     private val viewModel : MusicItemsViewModel by activityViewModel()
@@ -33,11 +34,11 @@ class MusicItemsFragment : Fragment(R.layout.fragment_music_items) {
     private val serviceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
             val binder = service as MediaPlayerService.MediaPlayerBinder
-            viewModel.mediaPlayerService = binder.getService()
+            viewModel.mediaPlayerService = WeakReference(binder.getService())
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {
-            viewModel.mediaPlayerService = null
+            viewModel.mediaPlayerService.clear()
         }
     }
 }

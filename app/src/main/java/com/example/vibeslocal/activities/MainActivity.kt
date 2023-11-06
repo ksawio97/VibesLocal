@@ -66,6 +66,7 @@ class MainActivity : AppCompatActivity() {
             if (binding.groupingPager.currentItem != it)
                 binding.groupingPager.currentItem = it
         }
+        currentPageViewModel.subscribe(currentPageChanges)
         //#endregion
 
         //adding action to inform changing page in groupingPager

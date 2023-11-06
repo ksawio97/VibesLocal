@@ -15,6 +15,7 @@ import com.example.vibeslocal.databinding.FragmentPlaybackControlBinding
 import com.example.vibeslocal.services.MediaPlayerService
 import com.example.vibeslocal.viewmodels.PlaybackControlViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import java.lang.ref.WeakReference
 
 class PlaybackControlFragment : Fragment(R.layout.fragment_playback_control) {
     private val viewModel: PlaybackControlViewModel by viewModel()
@@ -58,13 +59,13 @@ class PlaybackControlFragment : Fragment(R.layout.fragment_playback_control) {
                 toggleShowPlaybackControl(mediaPlayerService.isQueuePlaying())
                 togglePauseButtonIcon(mediaPlayerService.isPlaying())
 
-                viewModel.mediaPlayerService = mediaPlayerService
+                viewModel.mediaPlayerService = WeakReference(mediaPlayerService)
                 viewModel.subscribeToMediaPlayerEvent(MediaPlayerService.Events.PauseChangedEvent, togglePauseButtonIcon)
                 viewModel.subscribeToMediaPlayerEvent(MediaPlayerService.Events.IsQueuePlayingChangedEvent, toggleShowPlaybackControl)
             }
 
             override fun onServiceDisconnected(name: ComponentName?) {
-                viewModel.mediaPlayerService = null
+                viewModel.mediaPlayerService.clear()
 
                 viewModel.unsubscribeToMediaPlayerEvent(MediaPlayerService.Events.PauseChangedEvent, togglePauseButtonIcon)
                 viewModel.unsubscribeToMediaPlayerEvent(MediaPlayerService.Events.IsQueuePlayingChangedEvent, toggleShowPlaybackControl)
