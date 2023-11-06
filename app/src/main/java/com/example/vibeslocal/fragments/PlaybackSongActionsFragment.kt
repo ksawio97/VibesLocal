@@ -18,6 +18,7 @@ import java.lang.ref.WeakReference
 class PlaybackSongActionsFragment : Fragment(R.layout.fragment_playback_song_details) {
     private val viewModel: PlaybackSongActionsViewModel by inject()
     private lateinit var binding: FragmentPlaybackSongDetailsBinding
+    private lateinit var serviceConnection: ServiceConnection
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -42,7 +43,7 @@ class PlaybackSongActionsFragment : Fragment(R.layout.fragment_playback_song_det
         }
 
         //handle connection
-        val serviceConnection = object : ServiceConnection {
+        serviceConnection = object : ServiceConnection {
             override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
                 val binder = service as MediaPlayerService.MediaPlayerBinder
 
@@ -63,5 +64,11 @@ class PlaybackSongActionsFragment : Fragment(R.layout.fragment_playback_song_det
         //connect to MediaPlayerService
         val intent = Intent(requireContext(), MediaPlayerService::class.java)
         requireContext().bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+
+        requireContext().unbindService(serviceConnection)
     }
 }

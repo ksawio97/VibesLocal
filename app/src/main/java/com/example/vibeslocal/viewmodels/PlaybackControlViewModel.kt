@@ -5,7 +5,6 @@ import com.example.vibeslocal.services.MediaPlayerService
 import java.lang.ref.WeakReference
 
 class PlaybackControlViewModel : ViewModel() {
-    //TODO handle service connection here
     var mediaPlayerService: WeakReference<MediaPlayerService> = WeakReference(null)
 
     fun pauseSong() {

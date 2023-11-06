@@ -13,7 +13,6 @@ import java.lang.ref.WeakReference
 
 class MusicItemsViewModel(private val songsRepository: SongsRepository, private val songsQueueManager: SongsQueueManager) : ViewModel() {
     private val musicItemsListAdapter: MusicItemsListAdapter = MusicItemsListAdapter(mutableListOf())
-    //TODO handle service connection here
     var mediaPlayerService: WeakReference<MediaPlayerService> = WeakReference(null)
 
     fun configureRecyclerView(recyclerView: RecyclerView) {

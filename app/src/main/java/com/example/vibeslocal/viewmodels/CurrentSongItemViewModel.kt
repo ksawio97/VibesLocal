@@ -8,7 +8,6 @@ import com.example.vibeslocal.services.MediaPlayerService
 import java.lang.ref.WeakReference
 
 class CurrentSongItemViewModel(private val songThumbnailManager: SongThumbnailManager): ViewModel() {
-    //TODO handle service connection here
     var mediaPlayerService: WeakReference<MediaPlayerService> = WeakReference(null)
 
     fun subscribeToMediaPlayerEvent(event: MediaPlayerService.Events, action: (SongModel?) -> Unit) {

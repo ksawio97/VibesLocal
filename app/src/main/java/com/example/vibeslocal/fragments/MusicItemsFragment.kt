@@ -30,6 +30,12 @@ class MusicItemsFragment : Fragment(R.layout.fragment_music_items) {
         requireContext().bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+
+        requireContext().unbindService(serviceConnection)
+    }
+
     //handle connection
     private val serviceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
