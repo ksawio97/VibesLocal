@@ -35,6 +35,8 @@ class MusicItemsListAdapter(private var songsList: MutableList<SongModel>) :
             holder.songAuthor.text = currentItem.artist
             val thumbnail = currentItem.getThumbnail()
             holder.songThumbnail.setImageBitmap(thumbnail)
+
+            holder.setStartAnimation(R.anim.alpha)
         }
 
         override fun getItemCount(): Int {

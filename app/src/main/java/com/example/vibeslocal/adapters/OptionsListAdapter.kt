@@ -41,6 +41,8 @@ class OptionsListAdapter
         holder.optionTitle.text = currentItem.title
         val description = "${currentItem.songsCount} ${if (currentItem.songsCount == 1) "song" else "songs"}"
         holder.optionDescription.text = description
+
+        holder.setStartAnimation(R.anim.alpha)
     }
 
     inner class OptionHolder(itemView: View, listener: OnItemClickListener) : RecyclerView.ViewHolder(itemView) {

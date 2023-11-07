@@ -24,7 +24,6 @@ class OptionsViewModel(private val songsRepository: SongsRepository) : ViewModel
         onItemClickUIAction: (songsToSend: Array<SongModel>) -> Unit
     ) {
         recyclerView.setHasFixedSize(true)
-
         recyclerView.adapter = optionsListAdapter
 
         optionsListAdapter.setOnItemClickListener(object: OptionsListAdapter.OnItemClickListener {

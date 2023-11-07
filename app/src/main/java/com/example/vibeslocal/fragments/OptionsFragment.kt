@@ -3,6 +3,8 @@ package com.example.vibeslocal.fragments
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.view.animation.AnimationUtils
+import android.view.animation.LayoutAnimationController
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.example.vibeslocal.R
@@ -20,6 +22,11 @@ class OptionsFragment<T>(private val selector: (SongModel) -> T) : Fragment(R.la
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentOptionsBinding.bind(view)
+
+
+        binding.groupingOptions.layoutAnimation =
+            LayoutAnimationController(AnimationUtils.loadAnimation(context, R.anim.alpha_1))
+
         viewModel.configureRecyclerView(binding.groupingOptions) { songsToSend ->
             val intent = Intent(context, GroupedSongsActivity::class.java).apply {
                 val bundle = Bundle()

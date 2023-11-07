@@ -145,7 +145,7 @@ class MediaPlayerService : Service(), ICustomEventManager<MediaPlayerService.Eve
     }
 
     companion object {
-        const val TAG = "MediaPlayerService"
+        private const val TAG = "MediaPlayerService"
     }
 
     enum class Events {

@@ -7,6 +7,8 @@ import android.content.ServiceConnection
 import android.os.Bundle
 import android.os.IBinder
 import android.view.View
+import android.view.animation.AnimationUtils
+import android.view.animation.LayoutAnimationController
 import androidx.fragment.app.Fragment
 import com.example.vibeslocal.R
 import com.example.vibeslocal.databinding.FragmentMusicItemsBinding
@@ -22,7 +24,8 @@ class MusicItemsFragment : Fragment(R.layout.fragment_music_items) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentMusicItemsBinding.bind(view)
-
+        binding.musicItemsList.layoutAnimation =
+            LayoutAnimationController(AnimationUtils.loadAnimation(context, R.anim.translate))
         viewModel.configureRecyclerView(binding.musicItemsList)
 
         //connect to MediaPlayerService
