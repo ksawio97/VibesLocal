@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.example.vibeslocal.R
 import com.example.vibeslocal.activities.GroupedSongsActivity
+import com.example.vibeslocal.adapters.setupScrollProgress
 import com.example.vibeslocal.databinding.FragmentOptionsBinding
 import com.example.vibeslocal.models.SongModel
 import com.example.vibeslocal.viewmodels.OptionsViewModel
@@ -18,7 +19,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class OptionsFragment<T>(private val selector: (SongModel) -> T) : Fragment(R.layout.fragment_options) {
     private val viewModel: OptionsViewModel by viewModel()
     private lateinit var binding: FragmentOptionsBinding
-
+    private lateinit var cleanupProgressBar: () -> Unit
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentOptionsBinding.bind(view)
@@ -44,5 +45,13 @@ class OptionsFragment<T>(private val selector: (SongModel) -> T) : Fragment(R.la
 
             viewModel.addOptions()
         }
+        //setup scroll_progress
+        cleanupProgressBar = binding.groupingOptions.setupScrollProgress(binding.scrollProgress)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+
+        cleanupProgressBar()
     }
 }

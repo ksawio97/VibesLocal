@@ -5,8 +5,6 @@
     android:id="@+id/fragment_grouping_options"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingStart="10dp"
-    android:paddingEnd="10dp"
     tools:context=".fragments.OptionsFragment">
 
     <ProgressBar
@@ -23,8 +21,17 @@
         android:id="@+id/grouping_options"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_marginHorizontal="10dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:layout_editor_absoluteX="10dp" />
+
+    <ProgressBar
+        android:id="@+id/scroll_progress"
+        style="@style/ScrollProgressBar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

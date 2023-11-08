@@ -11,6 +11,7 @@ import android.view.animation.AnimationUtils
 import android.view.animation.LayoutAnimationController
 import androidx.fragment.app.Fragment
 import com.example.vibeslocal.R
+import com.example.vibeslocal.adapters.setupScrollProgress
 import com.example.vibeslocal.databinding.FragmentMusicItemsBinding
 import com.example.vibeslocal.services.MediaPlayerService
 import com.example.vibeslocal.viewmodels.MusicItemsViewModel
@@ -20,6 +21,7 @@ import java.lang.ref.WeakReference
 class MusicItemsFragment : Fragment(R.layout.fragment_music_items) {
     private val viewModel : MusicItemsViewModel by activityViewModel()
     private lateinit var binding: FragmentMusicItemsBinding
+    private lateinit var cleanupProgressBar: () -> Unit
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -31,11 +33,15 @@ class MusicItemsFragment : Fragment(R.layout.fragment_music_items) {
         //connect to MediaPlayerService
         val intent = Intent(requireContext(), MediaPlayerService::class.java)
         requireContext().bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
+
+        //setup scroll_progress
+        cleanupProgressBar = binding.musicItemsList.setupScrollProgress(binding.scrollProgress)
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
 
+        cleanupProgressBar()
         requireContext().unbindService(serviceConnection)
     }
 
