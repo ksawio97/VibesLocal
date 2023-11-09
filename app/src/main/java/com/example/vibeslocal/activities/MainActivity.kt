@@ -1,22 +1,23 @@
 package com.example.vibeslocal.activities
 
-import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.example.vibeslocal.adapters.GroupingPagerAdapter
 import com.example.vibeslocal.databinding.ActivityMainBinding
+import com.example.vibeslocal.models.AlbumsDescriptionStrategy
+import com.example.vibeslocal.models.ArtistsDescriptionStrategy
+import com.example.vibeslocal.models.GenresDescriptionStrategy
+import com.example.vibeslocal.models.PlaylistDescriptionStrategy
 import com.example.vibeslocal.models.SongModel
 import com.example.vibeslocal.services.MediaPlayerService
 import com.example.vibeslocal.viewmodels.CurrentPageViewModel
@@ -34,7 +35,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var requestPermissionLauncher: ActivityResultLauncher<String>
     private lateinit var startForResult: ActivityResultLauncher<Intent>
 
-    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -74,9 +74,16 @@ class MainActivity : AppCompatActivity() {
 
         val selectors = listOf(SongModel::artist, SongModel::albumId, SongModel::artist, SongModel::genre)
         //attaching adapter
-        binding.groupingPager.adapter = GroupingPagerAdapter(supportFragmentManager, lifecycle, selectors)
+        binding.groupingPager.adapter = GroupingPagerAdapter(supportFragmentManager, lifecycle, selectors) {position ->
+            when (position) {
+                0 -> PlaylistDescriptionStrategy()
+                1 -> AlbumsDescriptionStrategy()
+                2 -> ArtistsDescriptionStrategy()
+                3 -> GenresDescriptionStrategy()
+                else -> {throw StackOverflowError("There shouldn't be more than 4 options!")}
+            }
+        }
     }
-    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     private fun setupRequests() {
         requestPermissionLauncher =
             registerForActivityResult(
@@ -99,7 +106,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-    @RequiresApi(Build.VERSION_CODES.R)
+
     private fun startLoadingAnimation() {
         installSplashScreen().apply {
             setKeepOnScreenCondition {
@@ -107,26 +114,18 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+
     private fun askUserForPermissions() {
         requestPermissionLauncher.launch(requestedPermission)
     }
 
-    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+
     private fun showExplanationDialog() {
         AlertDialog.Builder(this)
             .setMessage("This app won't work without the necessary permissions. Will you enable them?")
             .setTitle("Permissions are necessary")
-            .setNegativeButton("No, Thanks", object: DialogInterface.OnClickListener {
-                override fun onClick(p0: DialogInterface?, p1: Int) {
-                    Log.i(TAG, "Permission $requestedPermission denied")
-                }
-            })
-            .setPositiveButton("Ok", object: DialogInterface.OnClickListener {
-                override fun onClick(p0: DialogInterface?, p1: Int) {
-                    openSettings()
-                }
-            })
+            .setNegativeButton("No, Thanks") { _, _ -> Log.i(TAG, "Permission $requestedPermission denied") }
+            .setPositiveButton("Ok") { _, _ -> openSettings() }
             .create()
             .show()
     }
@@ -140,8 +139,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     companion object {
-        val TAG: String = MainActivity::class.java.simpleName
-        @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-        val requestedPermission = android.Manifest.permission.READ_MEDIA_AUDIO
+        const val TAG: String = "MainActivity"
+        const val requestedPermission = android.Manifest.permission.READ_MEDIA_AUDIO
     }
 }

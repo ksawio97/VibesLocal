@@ -11,12 +11,17 @@ import com.example.vibeslocal.R
 import com.example.vibeslocal.activities.GroupedSongsActivity
 import com.example.vibeslocal.adapters.setupScrollProgress
 import com.example.vibeslocal.databinding.FragmentOptionsBinding
+import com.example.vibeslocal.models.GroupingInfoModel
+import com.example.vibeslocal.models.IGroupingDescriptionStrategy
 import com.example.vibeslocal.models.SongModel
 import com.example.vibeslocal.viewmodels.OptionsViewModel
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class OptionsFragment<T>(private val selector: (SongModel) -> T) : Fragment(R.layout.fragment_options) {
+class OptionsFragment<T>
+    (private val selector: (SongModel) -> T,
+    private val groupingDescriptionStrategy: IGroupingDescriptionStrategy)
+    : Fragment(R.layout.fragment_options) {
     private val viewModel: OptionsViewModel by viewModel()
     private lateinit var binding: FragmentOptionsBinding
     private lateinit var cleanupProgressBar: () -> Unit
@@ -28,10 +33,11 @@ class OptionsFragment<T>(private val selector: (SongModel) -> T) : Fragment(R.la
         binding.groupingOptions.layoutAnimation =
             LayoutAnimationController(AnimationUtils.loadAnimation(context, R.anim.alpha_1))
 
-        viewModel.configureRecyclerView(binding.groupingOptions) { songsToSend ->
+        viewModel.configureRecyclerView(binding.groupingOptions) { optionModel, songsToSend, getOptionThumbnail ->
             val intent = Intent(context, GroupedSongsActivity::class.java).apply {
                 val bundle = Bundle()
                 bundle.putParcelableArray(GroupedSongsActivity.retrievedSongs, songsToSend)
+                bundle.putParcelable(GroupedSongsActivity.retrievedGroupingInfo, GroupingInfoModel(getOptionThumbnail, optionModel.title, groupingDescriptionStrategy.getDescription()))
                 putExtras(bundle)
             }
             startActivity(intent)

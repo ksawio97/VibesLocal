@@ -1,45 +1,66 @@
 package com.example.vibeslocal.viewmodels
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.recyclerview.widget.RecyclerView
 import com.example.vibeslocal.adapters.OptionsListAdapter
+import com.example.vibeslocal.managers.SongThumbnailManager
 import com.example.vibeslocal.models.OptionModel
 import com.example.vibeslocal.models.SongModel
 import com.example.vibeslocal.models.getParameterDisplayValue
-import com.example.vibeslocal.models.getThumbnailFactory
 import com.example.vibeslocal.repositories.SongsRepository
-import org.koin.core.component.KoinComponent
 
-class OptionsViewModel(private val songsRepository: SongsRepository) : ViewModel(), KoinComponent {
-    private lateinit var options : List<List<SongModel>>
+class OptionsViewModel(private val songsRepository: SongsRepository, private val songThumbnailManager: SongThumbnailManager) : ViewModel() {
+    private lateinit var options : Map<Any, OptionsHolder>
     private lateinit var selector : (SongModel) -> Any?
     private val optionsListAdapter = OptionsListAdapter()
 
+    //getOptionThumbnail instead of thumbnail bcs parcelable has variables size limit
+    inner class OptionsHolder(val optionThumbnailId: Long, val songs: List<SongModel>)
+
     fun <T> loadGroupedSongs(selector: (SongModel) -> T) {
-        options = songsRepository.getGroupedSongs(selector).values.toList()
+        options = songsRepository.getGroupedSongs(selector).map { songsGroup ->
+            songsGroup.key as Any to
+                    OptionsHolder(
+                        songsGroup.value.first().albumId,
+                        songsGroup.value)
+        }.toMap()
+
         this.selector = selector
     }
     fun configureRecyclerView(
         recyclerView: RecyclerView,
-        onItemClickUIAction: (songsToSend: Array<SongModel>) -> Unit
+        onItemClickUIAction: (optionModel: OptionModel,
+                              songsToSend: Array<SongModel>,
+                              optionThumbnailId: Long) -> Unit
     ) {
         recyclerView.setHasFixedSize(true)
         recyclerView.adapter = optionsListAdapter
 
         optionsListAdapter.setOnItemClickListener(object: OptionsListAdapter.OnItemClickListener {
             override fun onItemClick(optionModel: OptionModel) {
-                onItemClickUIAction(options[optionModel.id].toTypedArray())
+                val option = options[optionModel.key]
+                if (option != null) {
+                    onItemClickUIAction(optionModel, option.songs.toTypedArray(), option.optionThumbnailId)
+                }
+                else {
+                    Log.e(TAG, "Option with key ${optionModel.key} doesn't exist")
+                }
             }
         })
     }
 
     fun addOptions() {
-        val getThumbnail = getThumbnailFactory()
-        val optionsList = options.mapIndexed { index, songs ->
-            val firstOption = songs.first()
-            OptionModel(index, firstOption.getParameterDisplayValue(selector), firstOption.getThumbnail(), songs.size)
+        val optionsList = options.map { optionSongsHolder ->
+            OptionModel(optionSongsHolder.key,
+                optionSongsHolder.value.songs.first().getParameterDisplayValue(selector),
+                songThumbnailManager.getThumbnail(optionSongsHolder.value.optionThumbnailId),
+                optionSongsHolder.value.songs.size)
         }
-
         optionsListAdapter.addItems(optionsList)
+    }
+
+    companion object {
+        const val TAG = "OptionsViewModel"
     }
 }

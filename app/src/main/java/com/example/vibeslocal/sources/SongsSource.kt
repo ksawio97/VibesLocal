@@ -2,10 +2,8 @@ package com.example.vibeslocal.sources
 
 import android.content.ContentUris
 import android.content.Context
-import android.os.Build
 import android.provider.MediaStore
 import android.util.Log
-import androidx.annotation.RequiresApi
 import com.example.vibeslocal.managers.SongThumbnailManager
 import com.example.vibeslocal.models.SongModel
 import kotlinx.coroutines.Deferred
@@ -17,7 +15,6 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
 class SongsSource(private val songThumbnailManager: SongThumbnailManager) : KoinComponent {
-    @RequiresApi(Build.VERSION_CODES.R)
     suspend fun loadSongsData() : List<SongModel>? = coroutineScope {
         val context: Context by inject()
 
