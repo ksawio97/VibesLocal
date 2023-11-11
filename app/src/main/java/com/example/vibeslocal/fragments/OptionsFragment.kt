@@ -35,9 +35,14 @@ class OptionsFragment<T>
 
         viewModel.configureRecyclerView(binding.groupingOptions) { optionModel, songsToSend, getOptionThumbnail ->
             val intent = Intent(context, GroupedSongsActivity::class.java).apply {
-                val bundle = Bundle()
-                bundle.putParcelableArray(GroupedSongsActivity.retrievedSongs, songsToSend)
-                bundle.putParcelable(GroupedSongsActivity.retrievedGroupingInfo, GroupingInfoModel(getOptionThumbnail, optionModel.title, groupingDescriptionStrategy.getDescription()))
+                val bundle = Bundle().apply {
+                    putParcelableArray(GroupedSongsActivity.retrievedSongs, songsToSend.toTypedArray())
+                    putParcelable(GroupedSongsActivity.retrievedGroupingInfo,
+                        GroupingInfoModel(
+                            getOptionThumbnail,
+                            optionModel.title,
+                            groupingDescriptionStrategy.getDescription(optionModel, songsToSend)))
+                }
                 putExtras(bundle)
             }
             startActivity(intent)

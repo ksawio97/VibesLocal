@@ -15,7 +15,6 @@ class OptionsViewModel(private val songsRepository: SongsRepository, private val
     private lateinit var selector : (SongModel) -> Any?
     private val optionsListAdapter = OptionsListAdapter()
 
-    //getOptionThumbnail instead of thumbnail bcs parcelable has variables size limit
     inner class OptionsHolder(val optionThumbnailId: Long, val songs: List<SongModel>)
 
     fun <T> loadGroupedSongs(selector: (SongModel) -> T) {
@@ -31,7 +30,7 @@ class OptionsViewModel(private val songsRepository: SongsRepository, private val
     fun configureRecyclerView(
         recyclerView: RecyclerView,
         onItemClickUIAction: (optionModel: OptionModel,
-                              songsToSend: Array<SongModel>,
+                              songsToSend: Collection<SongModel>,
                               optionThumbnailId: Long) -> Unit
     ) {
         recyclerView.setHasFixedSize(true)
@@ -41,7 +40,7 @@ class OptionsViewModel(private val songsRepository: SongsRepository, private val
             override fun onItemClick(optionModel: OptionModel) {
                 val option = options[optionModel.key]
                 if (option != null) {
-                    onItemClickUIAction(optionModel, option.songs.toTypedArray(), option.optionThumbnailId)
+                    onItemClickUIAction(optionModel, option.songs, option.optionThumbnailId)
                 }
                 else {
                     Log.e(TAG, "Option with key ${optionModel.key} doesn't exist")

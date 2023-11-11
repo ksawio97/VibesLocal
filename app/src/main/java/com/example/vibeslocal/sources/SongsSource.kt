@@ -53,7 +53,7 @@ class SongsSource(private val songThumbnailManager: SongThumbnailManager) : Koin
                     val artist = cursor.getString(artistColumn)
                     val albumId = cursor.getLong(albumIdColumn)
                     val albumTitle = cursor.getString(albumTitleColumn)
-                    val genre = cursor.getString(genreColumn) ?: "<unknown>"
+                    val genre = cursor.getString(genreColumn)?.trim() ?: unknownGenre
 
                     deferredThumbnails.add(async(Dispatchers.IO) {
                         if(loadedAlbumsThumbnails.contains(albumId))
@@ -75,5 +75,9 @@ class SongsSource(private val songThumbnailManager: SongThumbnailManager) : Koin
             return@coroutineScope songModels
         }
         return@coroutineScope null
+    }
+
+    companion object {
+        const val unknownGenre = "<unknown>"
     }
 }
