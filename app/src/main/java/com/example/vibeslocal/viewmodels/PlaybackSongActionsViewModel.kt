@@ -18,12 +18,4 @@ class PlaybackSongActionsViewModel : ViewModel() {
     fun playNext() {
         mediaPlayerService.get()?.playNextSong()
     }
-
-    fun subscribeToMediaPlayerEvent(event: MediaPlayerService.Events, action: (Boolean) -> Unit) {
-        mediaPlayerService.get()?.subscribeToEvent(event, action)
-    }
-
-    fun unsubscribeToMediaPlayerEvent(event: MediaPlayerService.Events, action: (Boolean) -> Unit) {
-        mediaPlayerService.get()?.unsubscribeToEvent(event, action)
-    }
 }

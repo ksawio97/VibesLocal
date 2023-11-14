@@ -6,16 +6,18 @@ import android.media.MediaPlayer
 import android.os.Binder
 import android.os.IBinder
 import android.util.Log
-import com.example.vibeslocal.generic.CustomEvent
-import com.example.vibeslocal.managers.CustomEventManager
-import com.example.vibeslocal.managers.ICustomEventManager
+import com.example.vibeslocal.events.CustomEvent
+import com.example.vibeslocal.events.ICustomEventClass
 import com.example.vibeslocal.managers.SongsQueueManager
 import com.example.vibeslocal.models.SongModel
 import com.example.vibeslocal.repositories.SongsRepository
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import org.koin.android.ext.android.inject
 import org.koin.core.component.KoinComponent
 
-class MediaPlayerService : Service(), ICustomEventManager<MediaPlayerService.Events>, KoinComponent {
+class MediaPlayerService : Service(), KoinComponent {
     private val binder = MediaPlayerBinder()
     private var mediaPlayer: MediaPlayer = MediaPlayer()
 
@@ -23,12 +25,17 @@ class MediaPlayerService : Service(), ICustomEventManager<MediaPlayerService.Eve
     private val songsRepository: SongsRepository by inject()
 
     private val isQueuePlaying = EventWithBooleanValue()
-    private val customEventManager: CustomEventManager<Events> =
-        CustomEventManager(mapOf(
-            Pair(Events.PauseChangedEvent,  CustomEvent()),
-            Pair(Events.IsQueuePlayingChangedEvent, isQueuePlaying),
-            Pair(Events.CurrentSongChangedEvent, CustomEvent()))
-        )
+    private val pauseChanged = CustomEvent<Boolean>()
+    private val currentSongChanged = CustomEvent<Long>()
+
+    //#region public events handles
+    val isQueuePlayingEvent: ICustomEventClass<Boolean>
+        get() = isQueuePlaying
+    val pauseChangedEvent: ICustomEventClass<Boolean>
+        get() = pauseChanged
+    val currentSongChangedEvent: ICustomEventClass<Long>
+        get() = currentSongChanged
+    //#endregion
 
     inner class MediaPlayerBinder : Binder() {
         fun getService() : MediaPlayerService{
@@ -45,11 +52,25 @@ class MediaPlayerService : Service(), ICustomEventManager<MediaPlayerService.Eve
         return START_STICKY
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.i(TAG, "onDestroy")
+        mediaPlayer.release()
+    }
+
+    fun getPlaybackProgressFlow(): Flow<Int> = flow {
+        while (true) {
+            emit(mediaPlayer.currentPosition)
+            delay(500)
+        }
+    }
+
+    fun getPlaybackDuration(): Int = mediaPlayer.duration
+
     fun startPlayback() {
-        mediaPlayer.reset()
         playCurrentSong()
-        customEventManager.notifyEvent(Events.CurrentSongChangedEvent, getCurrentSong())
-        customEventManager.notifyEvent(Events.PauseChangedEvent, true)
+        currentSongChanged.notify(songsQueueManager.getCurrentSong())
+        pauseChanged.notify(true)
         isQueuePlaying.setValue(true)
     }
 
@@ -63,8 +84,7 @@ class MediaPlayerService : Service(), ICustomEventManager<MediaPlayerService.Eve
             mediaPlayer.pause()
         else
             mediaPlayer.start()
-
-        customEventManager.notifyEvent(Events.PauseChangedEvent, mediaPlayer.isPlaying)
+        pauseChanged.notify(mediaPlayer.isPlaying)
     }
     fun isPlaying() : Boolean {
         return mediaPlayer.isPlaying
@@ -73,7 +93,7 @@ class MediaPlayerService : Service(), ICustomEventManager<MediaPlayerService.Eve
         return isQueuePlaying.getIsQueuePlaying()
     }
 
-    fun getCurrentSong() : SongModel? {
+    private fun getCurrentSong() : SongModel? {
         val currSongId = songsQueueManager.getCurrentSong()
         return songsRepository.getSongById(currSongId)
     }
@@ -81,14 +101,14 @@ class MediaPlayerService : Service(), ICustomEventManager<MediaPlayerService.Eve
     fun playPreviousSong() {
         if(songsQueueManager.goToPreviousSong()) {
             playCurrentSong()
-            customEventManager.notifyEvent(Events.CurrentSongChangedEvent, getCurrentSong())
+            currentSongChanged.notify(songsQueueManager.getCurrentSong())
         }
     }
 
     fun playNextSong() {
         if(songsQueueManager.goToNextSong()) {
             playCurrentSong()
-            customEventManager.notifyEvent(Events.CurrentSongChangedEvent, getCurrentSong())
+            currentSongChanged.notify(songsQueueManager.getCurrentSong())
         }
     }
 
@@ -97,7 +117,7 @@ class MediaPlayerService : Service(), ICustomEventManager<MediaPlayerService.Eve
 
         mediaPlayer.reset()
         mediaPlayer.setDataSource(applicationContext, currSong.uri)
-        mediaPlayer.prepareAsync()
+        mediaPlayer.prepare()
 
         // Set a callback for when the media is prepared
         mediaPlayer.setOnPreparedListener { mp ->
@@ -138,27 +158,7 @@ class MediaPlayerService : Service(), ICustomEventManager<MediaPlayerService.Eve
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        Log.i(TAG, "onDestroy")
-        mediaPlayer.release()
-    }
-
     companion object {
         private const val TAG = "MediaPlayerService"
-    }
-
-    enum class Events {
-        IsQueuePlayingChangedEvent,
-        PauseChangedEvent,
-        CurrentSongChangedEvent
-    }
-
-    override fun <T> subscribeToEvent(event: Events, action: (T) -> Unit) {
-        customEventManager.subscribeToEvent(event, action)
-    }
-
-    override fun <T> unsubscribeToEvent(event: Events, action: (T) -> Unit) {
-        customEventManager.unsubscribeToEvent(event, action)
     }
 }

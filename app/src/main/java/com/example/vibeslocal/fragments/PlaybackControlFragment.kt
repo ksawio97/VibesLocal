@@ -3,7 +3,6 @@ package com.example.vibeslocal.fragments
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
-import android.content.ServiceConnection
 import android.os.Bundle
 import android.os.IBinder
 import android.view.View
@@ -12,6 +11,7 @@ import androidx.fragment.app.Fragment
 import com.example.vibeslocal.R
 import com.example.vibeslocal.activities.PlaybackDetailsActivity
 import com.example.vibeslocal.databinding.FragmentPlaybackControlBinding
+import com.example.vibeslocal.events.ServiceConnectionWithEventManager
 import com.example.vibeslocal.services.MediaPlayerService
 import com.example.vibeslocal.viewmodels.PlaybackControlViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -20,7 +20,8 @@ import java.lang.ref.WeakReference
 class PlaybackControlFragment : Fragment(R.layout.fragment_playback_control) {
     private val viewModel: PlaybackControlViewModel by viewModel()
     private lateinit var binding: FragmentPlaybackControlBinding
-    private lateinit var serviceConnection: ServiceConnection
+    private lateinit var serviceConnection: ServiceConnectionWithEventManager
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentPlaybackControlBinding.bind(view)
@@ -51,25 +52,36 @@ class PlaybackControlFragment : Fragment(R.layout.fragment_playback_control) {
         }
 
         //handle connection
-        serviceConnection = object : ServiceConnection {
+        serviceConnection = object : ServiceConnectionWithEventManager() {
             override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
                 val binder = service as MediaPlayerService.MediaPlayerBinder
-
                 val mediaPlayerService = binder.getService()
 
                 toggleShowPlaybackControl(mediaPlayerService.isQueuePlaying())
                 togglePauseButtonIcon(mediaPlayerService.isPlaying())
 
                 viewModel.mediaPlayerService = WeakReference(mediaPlayerService)
-                viewModel.subscribeToMediaPlayerEvent(MediaPlayerService.Events.PauseChangedEvent, togglePauseButtonIcon)
-                viewModel.subscribeToMediaPlayerEvent(MediaPlayerService.Events.IsQueuePlayingChangedEvent, toggleShowPlaybackControl)
+                //set max progress
+                binding.playbackProgress.max = viewModel.getPlaybackDuration()
+                mediaPlayerService.currentSongChangedEvent.let {
+                    eventManager.subscribeTo(it) {
+                        binding.playbackProgress.max = viewModel.getPlaybackDuration()
+                    }
+                }
+                viewModel.startUpdatingProgressBar(binding.playbackProgress::setProgress)
+
+                mediaPlayerService.pauseChangedEvent.let {
+                    eventManager.subscribeTo(it, togglePauseButtonIcon)
+                }
+
+                mediaPlayerService.isQueuePlayingEvent.let {
+                    eventManager.subscribeTo(it, toggleShowPlaybackControl)
+                }
             }
 
             override fun onServiceDisconnected(name: ComponentName?) {
+                super.onServiceDisconnected(name)
                 viewModel.mediaPlayerService.clear()
-
-                viewModel.unsubscribeToMediaPlayerEvent(MediaPlayerService.Events.PauseChangedEvent, togglePauseButtonIcon)
-                viewModel.unsubscribeToMediaPlayerEvent(MediaPlayerService.Events.IsQueuePlayingChangedEvent, toggleShowPlaybackControl)
             }
         }
 
@@ -81,6 +93,7 @@ class PlaybackControlFragment : Fragment(R.layout.fragment_playback_control) {
     override fun onDestroyView() {
         super.onDestroyView()
 
+        serviceConnection.unsubscribeToAllEvents()
         requireContext().unbindService(serviceConnection)
     }
 }

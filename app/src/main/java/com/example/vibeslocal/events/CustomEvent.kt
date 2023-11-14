@@ -1,6 +1,6 @@
-package com.example.vibeslocal.generic
+package com.example.vibeslocal.events
 
-open class CustomEvent<T> : ICustomEventClass<T>{
+open class CustomEvent<T> : ICustomEventClass<T> {
     private val subscribers = mutableListOf<(T) -> Unit>()
 
     override fun subscribe(action: (T) -> Unit) {

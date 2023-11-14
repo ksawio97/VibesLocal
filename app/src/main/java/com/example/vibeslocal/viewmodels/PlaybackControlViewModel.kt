@@ -1,21 +1,32 @@
 package com.example.vibeslocal.viewmodels
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.vibeslocal.services.MediaPlayerService
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import java.lang.ref.WeakReference
 
 class PlaybackControlViewModel : ViewModel() {
     var mediaPlayerService: WeakReference<MediaPlayerService> = WeakReference(null)
+    private var updateJob: Job? = null
 
     fun pauseSong() {
         mediaPlayerService.get()?.pausePlayback()
     }
 
-    fun subscribeToMediaPlayerEvent(event: MediaPlayerService.Events, action: (Boolean) -> Unit) {
-        mediaPlayerService.get()?.subscribeToEvent(event, action)
+    fun getPlaybackDuration(): Int = mediaPlayerService.get()?.getPlaybackDuration() ?: 1
+
+    fun startUpdatingProgressBar(progressBarSetter: (Int) -> Unit) {
+        updateJob = viewModelScope.launch {
+            mediaPlayerService.get()?.getPlaybackProgressFlow()?.collect { position ->
+                progressBarSetter(position)
+            }
+        }
     }
 
-    fun unsubscribeToMediaPlayerEvent(event: MediaPlayerService.Events, action: (Boolean) -> Unit) {
-        mediaPlayerService.get()?.unsubscribeToEvent(event, action)
+    override fun onCleared() {
+        super.onCleared()
+        updateJob?.cancel()
     }
 }

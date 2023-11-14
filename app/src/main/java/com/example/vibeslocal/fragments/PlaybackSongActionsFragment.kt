@@ -3,13 +3,13 @@ package com.example.vibeslocal.fragments
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
-import android.content.ServiceConnection
 import android.os.Bundle
 import android.os.IBinder
 import android.view.View
 import androidx.fragment.app.Fragment
 import com.example.vibeslocal.R
 import com.example.vibeslocal.databinding.FragmentPlaybackSongDetailsBinding
+import com.example.vibeslocal.events.ServiceConnectionWithEventManager
 import com.example.vibeslocal.services.MediaPlayerService
 import com.example.vibeslocal.viewmodels.PlaybackSongActionsViewModel
 import org.koin.android.ext.android.inject
@@ -18,7 +18,7 @@ import java.lang.ref.WeakReference
 class PlaybackSongActionsFragment : Fragment(R.layout.fragment_playback_song_details) {
     private val viewModel: PlaybackSongActionsViewModel by inject()
     private lateinit var binding: FragmentPlaybackSongDetailsBinding
-    private lateinit var serviceConnection: ServiceConnection
+    private lateinit var serviceConnection: ServiceConnectionWithEventManager
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -43,7 +43,7 @@ class PlaybackSongActionsFragment : Fragment(R.layout.fragment_playback_song_det
         }
 
         //handle connection
-        serviceConnection = object : ServiceConnection {
+        serviceConnection = object : ServiceConnectionWithEventManager() {
             override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
                 val binder = service as MediaPlayerService.MediaPlayerBinder
 
@@ -51,13 +51,12 @@ class PlaybackSongActionsFragment : Fragment(R.layout.fragment_playback_song_det
                 viewModel.mediaPlayerService = WeakReference(mediaPlayerService)
 
                 togglePauseButtonIcon(mediaPlayerService.isPlaying())
-                viewModel.subscribeToMediaPlayerEvent(MediaPlayerService.Events.PauseChangedEvent, togglePauseButtonIcon)
+                eventManager.subscribeTo(mediaPlayerService.pauseChangedEvent, togglePauseButtonIcon)
             }
 
             override fun onServiceDisconnected(name: ComponentName?) {
+                super.onServiceDisconnected(name)
                 viewModel.mediaPlayerService.clear()
-
-                viewModel.unsubscribeToMediaPlayerEvent(MediaPlayerService.Events.PauseChangedEvent, togglePauseButtonIcon)
             }
         }
 
@@ -69,6 +68,7 @@ class PlaybackSongActionsFragment : Fragment(R.layout.fragment_playback_song_det
     override fun onDestroyView() {
         super.onDestroyView()
 
+        serviceConnection.unsubscribeToAllEvents()
         requireContext().unbindService(serviceConnection)
     }
 }

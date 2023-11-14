@@ -1,4 +1,4 @@
-package com.example.vibeslocal.generic
+package com.example.vibeslocal.events
 
 interface ICustomEventClass<T> {
     fun subscribe(action: (T) -> Unit)

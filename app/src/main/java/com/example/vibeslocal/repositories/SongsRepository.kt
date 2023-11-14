@@ -1,6 +1,6 @@
 package com.example.vibeslocal.repositories
 
-import com.example.vibeslocal.generic.CustomEvent
+import com.example.vibeslocal.events.CustomEvent
 import com.example.vibeslocal.models.SongModel
 import com.example.vibeslocal.sources.SongsSource
 

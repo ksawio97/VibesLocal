@@ -2,8 +2,8 @@ package com.example.vibeslocal.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.viewpager2.widget.ViewPager2
-import com.example.vibeslocal.generic.CustomEvent
-import com.example.vibeslocal.generic.ICustomEventClass
+import com.example.vibeslocal.events.CustomEvent
+import com.example.vibeslocal.events.ICustomEventClass
 import com.google.android.material.tabs.TabLayout
 
 class CurrentPageViewModel : ViewModel(), ICustomEventClass<Int> {
