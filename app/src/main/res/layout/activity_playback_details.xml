@@ -5,11 +5,10 @@
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.PlaybackDetailsActivity"
-    tools:viewBindingIgnore="true">
+    tools:context=".activities.PlaybackDetailsActivity">
 
     <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/fragmentContainerView2"
+        android:id="@+id/playback_actions_fragment"
         android:name="com.example.vibeslocal.fragments.PlaybackSongActionsFragment"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -18,5 +17,15 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         tools:layout="@layout/fragment_playback_song_details" />
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/fragmentContainerView2"
+        android:name="com.example.vibeslocal.fragments.SongDurationSeekBarFragment"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@+id/playback_actions_fragment"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:layout="@layout/fragment_song_duration_seek_bar" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

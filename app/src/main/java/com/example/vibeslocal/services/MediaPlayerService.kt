@@ -65,6 +65,12 @@ class MediaPlayerService : Service(), KoinComponent {
         }
     }
 
+    fun setPlaybackProgress(newProgress: Int) {
+        if (getPlaybackDuration() >= newProgress) {
+            mediaPlayer.seekTo(newProgress)
+        }
+    }
+
     fun getPlaybackDuration(): Int = mediaPlayer.duration
 
     fun startPlayback() {
