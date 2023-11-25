@@ -12,15 +12,21 @@ class SongDurationSeekBarViewModel : ViewModel() {
     private var updateJob: Job? = null
     var suspenseUpdating: Boolean = false
 
-    fun startUpdatingProgressBar(progressBarSetter: (Int) -> Unit) {
+    fun startUpdatingProgress(progressSetter: (Int) -> Unit) {
         updateJob = viewModelScope.launch {
             mediaPlayerService.get()?.getPlaybackProgressFlow()?.collect { position ->
                 if (!suspenseUpdating)
-                    progressBarSetter(position)
+                    progressSetter(position)
             }
         }
     }
 
+    fun formatTimeFromMilsToString(milliseconds: Int): String {
+        val minutes = (milliseconds / 1000 / 60).toInt()
+        val seconds = (milliseconds / 1000).toInt() % 60
+        val secondsText = if (seconds < 10) "0$seconds" else seconds.toString()
+        return "$minutes:${secondsText}"
+    }
     fun setPlaybackProgress(newProgress: Int) {
         mediaPlayerService.get()?.setPlaybackProgress(newProgress)
     }

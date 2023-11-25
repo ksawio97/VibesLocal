@@ -135,7 +135,6 @@ class MainActivity : AppCompatActivity() {
         val uri = Uri.fromParts("package", packageName, null)
         intent.data = uri
         startForResult.launch(intent)
-        //startActivity(intent)
     }
 
     companion object {

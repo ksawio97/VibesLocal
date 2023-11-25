@@ -32,11 +32,9 @@ class SongDurationSeekBarFragment : Fragment(R.layout.fragment_song_duration_see
                     viewModel.setPlaybackProgress(progress)
                 }
             }
-
             override fun onStartTrackingTouch(seekBar: SeekBar?) {
                 viewModel.suspenseUpdating = true
             }
-
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
                 viewModel.suspenseUpdating = false
             }
@@ -56,7 +54,18 @@ class SongDurationSeekBarFragment : Fragment(R.layout.fragment_song_duration_see
                         binding.seekBar.max = viewModel.getPlaybackDuration()
                     }
                 }
-                viewModel.startUpdatingProgressBar(binding.seekBar::setProgress)
+                //set max progress for TextView
+                binding.maxProgressInfo.text = viewModel.formatTimeFromMilsToString(viewModel.getPlaybackDuration())
+                mediaPlayerService.currentSongChangedEvent.let {
+                    eventManager.subscribeTo(it) {
+                        binding.maxProgressInfo.text = viewModel.formatTimeFromMilsToString(viewModel.getPlaybackDuration())
+                    }
+                }
+
+                viewModel.startUpdatingProgress(binding.seekBar::setProgress)
+                viewModel.startUpdatingProgress { progress ->
+                    binding.progressInfo.text = viewModel.formatTimeFromMilsToString(progress)
+                }
             }
 
             override fun onServiceDisconnected(name: ComponentName?) {
@@ -65,6 +74,7 @@ class SongDurationSeekBarFragment : Fragment(R.layout.fragment_song_duration_see
             }
         }
 
+        //binding.progressInfo.text =
         //connect to MediaPlayerService
         val intent = Intent(requireContext(), MediaPlayerService::class.java)
         requireContext().bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
