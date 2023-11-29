@@ -8,15 +8,26 @@
     tools:context=".activities.PlaybackDetailsActivity">
 
     <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/current_song_info_fragment"
+        android:name="com.example.vibeslocal.fragments.CurrentSongInfoFragment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@+id/fragmentContainerView2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout="@layout/fragment_current_song_info" />
+
+    <androidx.fragment.app.FragmentContainerView
         android:id="@+id/playback_actions_fragment"
-        android:name="com.example.vibeslocal.fragments.PlaybackSongActionsFragment"
+        android:name="com.example.vibeslocal.fragments.PlaybackControl2Fragment"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        tools:layout="@layout/fragment_playback_song_details" />
+        tools:layout="@layout/fragment_playback_control_2" />
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fragmentContainerView2"

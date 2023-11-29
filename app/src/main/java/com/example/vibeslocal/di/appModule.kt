@@ -10,9 +10,10 @@ import com.example.vibeslocal.viewmodels.GroupedSongsInfoViewModel
 import com.example.vibeslocal.viewmodels.MainViewModel
 import com.example.vibeslocal.viewmodels.MusicItemsViewModel
 import com.example.vibeslocal.viewmodels.OptionsViewModel
+import com.example.vibeslocal.viewmodels.PlaybackControl2ViewModel
 import com.example.vibeslocal.viewmodels.PlaybackControlViewModel
-import com.example.vibeslocal.viewmodels.PlaybackSongActionsViewModel
 import com.example.vibeslocal.viewmodels.SongDurationSeekBarViewModel
+import com.example.vibeslocal.viewmodels.CurrentSongInfoViewModel
 import org.koin.androidx.viewmodel.dsl.viewModelOf
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
@@ -21,13 +22,14 @@ import org.koin.dsl.module
 val viewModelModule = module {
     viewModelOf(::CurrentPageViewModel)
     viewModelOf(::OptionsViewModel)
-    viewModelOf(::PlaybackSongActionsViewModel)
+    viewModelOf(::PlaybackControl2ViewModel)
     viewModelOf(::CurrentSongItemViewModel)
     viewModelOf(::MainViewModel)
     viewModelOf(::MusicItemsViewModel)
     viewModelOf(::PlaybackControlViewModel)
     viewModelOf(::GroupedSongsInfoViewModel)
     viewModelOf(::SongDurationSeekBarViewModel)
+    viewModelOf(::CurrentSongInfoViewModel)
 }
 
 

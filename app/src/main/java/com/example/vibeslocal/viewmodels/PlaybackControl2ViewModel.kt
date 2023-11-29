@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import com.example.vibeslocal.services.MediaPlayerService
 import java.lang.ref.WeakReference
 
-class PlaybackSongActionsViewModel : ViewModel() {
+class PlaybackControl2ViewModel : ViewModel() {
     var mediaPlayerService: WeakReference<MediaPlayerService> = WeakReference(null)
 
     fun playPrevious() {

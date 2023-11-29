@@ -8,21 +8,21 @@ import android.os.IBinder
 import android.view.View
 import androidx.fragment.app.Fragment
 import com.example.vibeslocal.R
-import com.example.vibeslocal.databinding.FragmentPlaybackSongDetailsBinding
+import com.example.vibeslocal.databinding.FragmentPlaybackControl2Binding
 import com.example.vibeslocal.events.ServiceConnectionWithEventManager
 import com.example.vibeslocal.services.MediaPlayerService
-import com.example.vibeslocal.viewmodels.PlaybackSongActionsViewModel
+import com.example.vibeslocal.viewmodels.PlaybackControl2ViewModel
 import org.koin.android.ext.android.inject
 import java.lang.ref.WeakReference
 
-class PlaybackSongActionsFragment : Fragment(R.layout.fragment_playback_song_details) {
-    private val viewModel: PlaybackSongActionsViewModel by inject()
-    private lateinit var binding: FragmentPlaybackSongDetailsBinding
+class PlaybackControl2Fragment : Fragment(R.layout.fragment_playback_control_2) {
+    private val viewModel: PlaybackControl2ViewModel by inject()
+    private lateinit var binding: FragmentPlaybackControl2Binding
     private lateinit var serviceConnection: ServiceConnectionWithEventManager
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding = FragmentPlaybackSongDetailsBinding.bind(view)
+        binding = FragmentPlaybackControl2Binding.bind(view)
 
         //region setting up basic onClick actions
         binding.previousSongButton.setOnClickListener {
@@ -52,6 +52,10 @@ class PlaybackSongActionsFragment : Fragment(R.layout.fragment_playback_song_det
 
                 togglePauseButtonIcon(mediaPlayerService.isPlaying())
                 eventManager.subscribeTo(mediaPlayerService.pauseChangedEvent, togglePauseButtonIcon)
+                //set to true because when song gets changed MediaPlayer starts playing
+                eventManager.subscribeTo(mediaPlayerService.currentSongChangedEvent) { _ ->
+                    togglePauseButtonIcon(true)
+                }
             }
 
             override fun onServiceDisconnected(name: ComponentName?) {
