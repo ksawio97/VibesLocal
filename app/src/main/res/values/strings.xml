@@ -13,4 +13,11 @@
     <string name="title">title</string>
     <string name="description">description</string>
     <string name="thumnail_description">Thumbnail image</string>
+    <string name="song_option">Song</string>
+    <string name="queue_option">Queue</string>
+    <string name="go_back_button">Go back button</string>
+    <string name="song_thumbnail">Song thumbnail</string>
+    <string name="previous">Play previous</string>
+    <string name="next">Play next</string>
+    <string name="pause_song_button">Pause song button</string>
 </resources>

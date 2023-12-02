@@ -27,7 +27,7 @@ class NavigationTabFragment : Fragment(R.layout.fragment_navigation_tab) {
 
     override fun onDestroyView() {
         super.onDestroyView()
-
+        //clearing subscription
         currentPageViewModel.unsubscribe(currentPageChanges)
     }
 }

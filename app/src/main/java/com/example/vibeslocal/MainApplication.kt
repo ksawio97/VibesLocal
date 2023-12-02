@@ -1,7 +1,6 @@
 package com.example.vibeslocal
 
 import android.app.Application
-import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.example.vibeslocal.di.appModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger

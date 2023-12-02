@@ -52,7 +52,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-
+        //clearing subscription
         currentPageViewModel.unsubscribe(currentPageChanges)
     }
 
