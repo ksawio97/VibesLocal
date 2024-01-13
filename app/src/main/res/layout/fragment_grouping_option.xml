@@ -12,14 +12,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="4dp"
+        app:cardBackgroundColor="@color/surfaceVariant"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/background_1">
+            android:layout_height="match_parent">
 
             <ImageView
                 android:id="@+id/option_image"
@@ -40,7 +40,6 @@
                 android:paddingStart="20dp"
                 android:paddingEnd="20dp"
                 android:text="@string/option_title"
-                android:textColor="@color/white"
                 android:textSize="15sp"
                 app:flow_wrapMode="none"
                 app:layout_constraintBottom_toTopOf="@+id/option_description"
@@ -59,7 +58,6 @@
                 android:paddingEnd="20dp"
                 android:paddingBottom="2dp"
                 android:text="@string/option_description"
-                android:textColor="@color/foreground_1"
                 android:textSize="11sp"
                 android:textStyle="italic"
                 app:layout_constraintBottom_toBottomOf="parent"

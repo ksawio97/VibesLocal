@@ -11,7 +11,7 @@
         android:id="@+id/current_song_thumbnail"
         android:layout_width="160dp"
         android:layout_height="160dp"
-        android:contentDescription="@string/thumnail_description"
+        android:contentDescription="@string/thumbnail_description"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"

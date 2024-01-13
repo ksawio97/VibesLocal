@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <style name="SongDetailsButton" parent="android:Widget.ImageButton">
-        <item name="android:tint">@color/white</item>
-        <item name="android:background">@color/black</item>
-        <item name="android:padding">5dp</item>
+        <item name="android:padding">15dp</item>
+        <item name="android:tint">@color/onPrimary</item>
+        <item name="android:backgroundTint">@color/primary</item>
     </style>
 
     <style name="ScrollProgressBar" parent="@style/Widget.AppCompat.ProgressBar.Horizontal">

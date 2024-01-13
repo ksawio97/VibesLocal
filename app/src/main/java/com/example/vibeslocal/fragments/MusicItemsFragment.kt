@@ -14,6 +14,7 @@ import com.example.vibeslocal.R
 import com.example.vibeslocal.adapters.setupScrollProgress
 import com.example.vibeslocal.databinding.FragmentMusicItemsBinding
 import com.example.vibeslocal.services.MediaPlayerService
+import com.example.vibeslocal.utils.SpacingItemDecoration
 import com.example.vibeslocal.viewmodels.MusicItemsViewModel
 import org.koin.androidx.viewmodel.ext.android.activityViewModel
 import java.lang.ref.WeakReference
@@ -29,6 +30,10 @@ class MusicItemsFragment : Fragment(R.layout.fragment_music_items) {
         binding.musicItemsList.layoutAnimation =
             LayoutAnimationController(AnimationUtils.loadAnimation(context, R.anim.translate))
         viewModel.configureRecyclerView(binding.musicItemsList)
+
+        context?.let {
+            binding.musicItemsList.addItemDecoration(SpacingItemDecoration(it, SpacingItemDecoration.Spacing(10, 0, 10, 0)))
+        }
 
         //connect to MediaPlayerService
         val intent = Intent(requireContext(), MediaPlayerService::class.java)
