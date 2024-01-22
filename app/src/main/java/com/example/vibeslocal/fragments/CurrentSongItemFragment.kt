@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.IBinder
+import android.text.TextUtils
 import android.view.View
 import androidx.fragment.app.Fragment
 import com.example.vibeslocal.R
@@ -23,6 +24,21 @@ class CurrentSongItemFragment : Fragment(R.layout.song_item) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = SongItemBinding.bind(view)
+
+
+        //#region focus on Song item (it's title will be auto scrolling horizontally)
+        binding.songTitle.apply {
+            ellipsize = TextUtils.TruncateAt.MARQUEE
+            maxLines = 1
+            setSingleLine()
+            marqueeRepeatLimit = -1
+            focusable = View.FOCUSABLE
+            isClickable = true
+            isFocusableInTouchMode = true
+            canScrollHorizontally(-1)
+            requestFocus()
+        }
+        //#endregion
 
         //handle connection
         serviceConnection = object : ServiceConnectionWithEventManager() {
