@@ -14,6 +14,7 @@ import com.example.vibeslocal.viewmodels.OptionsViewModel
 import com.example.vibeslocal.viewmodels.PlaybackControl2ViewModel
 import com.example.vibeslocal.viewmodels.PlaybackControlViewModel
 import com.example.vibeslocal.viewmodels.SongDurationSeekBarViewModel
+import com.example.vibeslocal.viewmodels.QueueInfoViewModel
 import org.koin.androidx.viewmodel.dsl.viewModelOf
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
@@ -30,6 +31,7 @@ val viewModelModule = module {
     viewModelOf(::GroupedSongsInfoViewModel)
     viewModelOf(::SongDurationSeekBarViewModel)
     viewModelOf(::CurrentSongInfoViewModel)
+    viewModelOf(::QueueInfoViewModel)
 }
 
 

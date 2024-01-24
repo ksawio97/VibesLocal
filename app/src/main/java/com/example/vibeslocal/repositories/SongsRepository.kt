@@ -5,10 +5,11 @@ import com.example.vibeslocal.models.SongModel
 import com.example.vibeslocal.sources.SongsSource
 
 class SongsRepository(private val songsSource: SongsSource) {
+    //TODO change songs: MutableList<SongModel> so it uses dictionary (faster getSongById)
     private val songs: MutableList<SongModel> = mutableListOf()
     private val songsChangedEvent = CustomEvent<Collection<SongModel>>()
 
-    suspend fun loadData(){
+    suspend fun loadData() {
         songs.clear()
         val songsData = songsSource.loadSongsData() ?: return
         songs.addAll(songsData)
@@ -16,7 +17,7 @@ class SongsRepository(private val songsSource: SongsSource) {
     }
 
     fun getAll() : Collection<SongModel> {
-        return songs
+        return songs.toList()
     }
 
     fun getSongById(id : Long): SongModel? {

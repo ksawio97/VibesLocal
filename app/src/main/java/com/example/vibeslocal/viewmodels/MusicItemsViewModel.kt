@@ -9,7 +9,7 @@ import com.example.vibeslocal.repositories.SongsRepository
 import com.example.vibeslocal.services.MediaPlayerService
 import java.lang.ref.WeakReference
 
-class MusicItemsViewModel(private val songsRepository: SongsRepository, private val songsQueueManager: SongsQueueManager) : ViewModel() {
+class MusicItemsViewModel(private val songsQueueManager: SongsQueueManager) : ViewModel() {
     private val musicItemsListAdapter: MusicItemsListAdapter = MusicItemsListAdapter(mutableListOf())
     var mediaPlayerService: WeakReference<MediaPlayerService> = WeakReference(null)
 
@@ -21,18 +21,19 @@ class MusicItemsViewModel(private val songsRepository: SongsRepository, private 
             override fun onItemClick(songModel: SongModel?) {
                 if(songModel == null)
                     return
-
-                songsRepository.getSongById(songModel.id).let{
-                    if (it == null)
-                        return
-                    val songs = songsRepository.getMappedNotNullSongs { song ->
-                        if (song.id >= songModel.id)
-                            return@getMappedNotNullSongs song.id
-                        null
-                    }
-
-                    songsQueueManager.setQueue(songs)
+                //TODO this view model is used in SongQueueInfo, this setOnItemClickListener must be declared somewhere else
+                val musicItemsSongs = musicItemsListAdapter.getSongs()
+                //from this id get all other songs to queue
+                var startId = musicItemsSongs.size
+                //gets current song and next ones
+                val newQueueSongsId = musicItemsSongs.mapIndexedNotNull { index, song ->
+                    if (songModel.id == song.id)
+                        startId = index
+                    if (index >= startId)
+                        return@mapIndexedNotNull song.id
+                    null
                 }
+                songsQueueManager.setQueue(newQueueSongsId)
 
                 mediaPlayerService.get()?.startPlayback()
             }

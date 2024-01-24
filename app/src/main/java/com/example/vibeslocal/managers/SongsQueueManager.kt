@@ -34,4 +34,12 @@ class SongsQueueManager {
         }
         return false
     }
+
+    /**
+     * Returns Queue with songs id's
+     * @return Songs Queue copy
+     */
+    fun getSongsQueue() : Collection<Long> {
+        return songsQueue.toList()
+    }
 }

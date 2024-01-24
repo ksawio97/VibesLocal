@@ -51,6 +51,13 @@ class MusicItemsListAdapter(private var songsList: MutableList<SongModel>) :
             notifyItemRangeInserted(oldLength, songsList.size - oldLength)
         }
 
+        /**
+         * @return song list copy
+         */
+        fun getSongs() : Collection<SongModel> {
+            return songsList.toList()
+        }
+
         inner class SongHolder(itemView: View, listener: OnItemClickListener) : RecyclerView.ViewHolder(itemView) {
             private val binding = SongItemBinding.bind(itemView)
             lateinit var songModel: SongModel
