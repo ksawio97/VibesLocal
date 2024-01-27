@@ -16,15 +16,20 @@ class MusicItemsListAdapter(private var songsList: MutableList<SongModel>) :
         private val getThumbnail = getThumbnailFactory()
         private lateinit var onClickListener : OnItemClickListener
         interface OnItemClickListener {
-            fun onItemClick(songModel: SongModel?)
+            fun onItemClick(songModel: SongModel)
         }
 
         fun setOnItemClickListener(listener: OnItemClickListener) {
             onClickListener = listener
         }
 
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SongHolder {
+    /**
+     * Might throw UninitializedPropertyAccessException
+     */
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SongHolder {
             val itemView = LayoutInflater.from(parent.context).inflate(R.layout.song_item, parent, false)
+            if (!::onClickListener.isInitialized)
+                throw UninitializedPropertyAccessException("onClickListener has not been initialized")
             return SongHolder(itemView, onClickListener)
         }
 
